@@ -1,42 +1,108 @@
 ---
 /**
- * Site Footer Component
- * Black footer with logo, tagline, and copyright
+ * Site Footer — Karen's Cleaning
+ * Dark green (#0D2626) footer with logo, social icons, contact, pages, CTA
  */
 
-import { CloudinaryPresets } from '@/lib/cloudinary';
-
 export interface Props {
-  logoUrl: string;
-  tagline?: string;
   copyrightYear?: number;
 }
 
 const {
-  logoUrl,
-  tagline = 'Hand it off. It\'s handled.',
   copyrightYear = new Date().getFullYear(),
 } = Astro.props;
+
+const contactInfo = {
+  phone: import.meta.env.CONTACT_PHONE || '(732) 693-2350',
+  email: import.meta.env.CONTACT_EMAIL || 'cerpa.karen@yahoo.com',
+  address: import.meta.env.CONTACT_ADDRESS || 'Ocean, NJ 07712',
+  hours: import.meta.env.CONTACT_HOURS || 'Monday–Friday\n9am–5pm',
+};
+
+const pageLinks = [
+  { label: 'Home', url: '/' },
+  { label: 'Our Services', url: '#services' },
+  { label: 'About', url: '#about' },
+];
+
+const bookingUrl = import.meta.env.BOOKING_URL || '#contact';
 ---
 
-<footer class="w-full py-24 px-6 md:px-12 bg-black text-white">
-  <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
-    
-    <!-- Logo -->
-    <img
-      src={CloudinaryPresets.logo(logoUrl, 40)}
-      alt="Your Site Name"
-      class="h-10 w-auto mb-8 invert opacity-90"
-    />
+<footer id="contact" class="bg-[#0D2626] pt-24 pb-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
 
-    <!-- Tagline -->
-    <p class="text-2xl text-neutral-400 mb-12 max-w-2xl mx-auto font-body font-light tracking-wide">
-      {tagline}
-    </p>
+      {/* Logo & Socials */}
+      <div class="md:col-span-1">
+        <a href="/" class="flex items-center text-[#00C4CC] mb-8">
+          <span class="text-5xl font-medium tracking-tight">Karen's</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="#" class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#00C4CC] hover:bg-[#F8F8F8]/10 transition-colors" aria-label="Facebook">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#00C4CC] hover:bg-[#F8F8F8]/10 transition-colors" aria-label="Social">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#00C4CC] hover:bg-[#F8F8F8]/10 transition-colors" aria-label="Instagram">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/></svg>
+          </a>
+        </div>
+      </div>
 
-    <!-- Copyright -->
-    <div class="w-full pt-8 border-t border-neutral-800 flex flex-col md:flex-row justify-center items-center text-sm text-neutral-500">
-      <div>© {copyrightYear} Your Site Name. All rights reserved.</div>
+      {/* Contact Details */}
+      <div>
+        <h4 class="text-lg font-normal tracking-tight text-[#F8F8F8] mb-8">Contact Us</h4>
+        <ul class="space-y-5 text-lg text-[#F8F8F8]/70 font-light">
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-[#00C4CC] mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+            <a href={`tel:${contactInfo.phone.replace(/[^+\d]/g, '')}`} class="hover:text-[#00C4CC] transition-colors">{contactInfo.phone}</a>
+          </li>
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-[#00C4CC] mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            <a href={`mailto:${contactInfo.email}`} class="hover:text-[#00C4CC] transition-colors break-all">{contactInfo.email}</a>
+          </li>
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-[#00C4CC] mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+            <span>{contactInfo.address}</span>
+          </li>
+          <li class="flex items-start gap-4">
+            <svg class="w-6 h-6 text-[#00C4CC] mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="whitespace-pre-line">{contactInfo.hours}</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Pages */}
+      <div>
+        <h4 class="text-lg font-normal tracking-tight text-[#F8F8F8] mb-8">Pages</h4>
+        <ul class="space-y-5 text-lg text-[#F8F8F8]/70 font-light">
+          {pageLinks.map((link) => (
+            <li>
+              <a href={link.url} class="hover:text-[#00C4CC] transition-colors">{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Get Started */}
+      <div>
+        <h4 class="text-lg font-normal tracking-tight text-[#F8F8F8] mb-8">Get Started</h4>
+        <ul class="space-y-5 text-lg text-[#F8F8F8]/70 font-light">
+          <li>
+            <a href={bookingUrl} class="text-[#00C4CC] font-normal hover:text-[#00898F] transition-colors">Get Your Estimate</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Bottom bar */}
+    <div class="border-t border-[#F8F8F8]/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-base text-[#F8F8F8]/50 font-light">
+      <p>&copy; {copyrightYear} Karen's Cleaning Services. All rights reserved.</p>
+      <div class="flex gap-8">
+        <a href="#" class="hover:text-[#00C4CC] transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-[#00C4CC] transition-colors">Terms of Use</a>
+      </div>
     </div>
   </div>
 </footer>

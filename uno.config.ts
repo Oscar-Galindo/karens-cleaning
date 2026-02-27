@@ -19,20 +19,20 @@ export default defineConfig({
   
   theme: {
     colors: {
-      // Primary Colors (Brand Blue)
+      // Primary Colors (Brand Teal — #00C4CC)
       primary: {
-        50: '#EEF4FF',
-        100: '#DAE6FF',
-        200: '#BDD3FF',
-        300: '#90B5FF',
-        400: '#5B8BFF',
-        500: '#3366FF', // Main brand color
-        600: '#1A4FE8',
-        700: '#1240D4',
-        800: '#1437AC',
-        900: '#163388',
-        950: '#0F1F54',
-        DEFAULT: '#3366FF',
+        50: '#F0FDFD',
+        100: '#CCFBFC',
+        200: '#99F5F7',
+        300: '#5EEDF0',
+        400: '#2DD9DE',
+        500: '#00C4CC', // Main brand color
+        600: '#00A3AA',
+        700: '#00898F',
+        800: '#006E73',
+        900: '#005A5E',
+        950: '#003A3D',
+        DEFAULT: '#00C4CC',
       },
       
       // Secondary Colors (Brand Orange)
@@ -138,7 +138,7 @@ export default defineConfig({
       xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
       '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
       card: '0 2px 8px -2px rgb(0 0 0 / 0.08), 0 4px 16px -4px rgb(0 0 0 / 0.12)',
-      button: '0 4px 12px -2px rgb(51 102 255 / 0.3)',
+      button: '0 4px 12px -2px rgb(0 196 204 / 0.3)',
     },
     
     // Animation Duration
@@ -231,11 +231,11 @@ export default defineConfig({
   // Custom Rules
   rules: [
     // Gradient backgrounds
-    ['bg-gradient-brand', { 
-      background: 'linear-gradient(135deg, #3366FF 0%, #1240D4 100%)' 
+    ['bg-gradient-brand', {
+      background: 'linear-gradient(135deg, #00C4CC 0%, #00898F 100%)'
     }],
-    ['bg-gradient-brand-reverse', { 
-      background: 'linear-gradient(135deg, #1240D4 0%, #3366FF 100%)' 
+    ['bg-gradient-brand-reverse', {
+      background: 'linear-gradient(135deg, #00898F 0%, #00C4CC 100%)'
     }],
     ['bg-gradient-accent', { 
       background: 'linear-gradient(135deg, #FF7A0F 0%, #F05E05 100%)' 
@@ -243,7 +243,7 @@ export default defineConfig({
     
     // Text gradients
     ['text-gradient-brand', {
-      background: 'linear-gradient(135deg, #3366FF 0%, #1240D4 100%)',
+      background: 'linear-gradient(135deg, #00C4CC 0%, #00898F 100%)',
       '-webkit-background-clip': 'text',
       '-webkit-text-fill-color': 'transparent',
       'background-clip': 'text',

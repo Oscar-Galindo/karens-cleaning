@@ -1,0 +1,89 @@
+---
+/**
+ * Service Cards — serviceCardsComponent
+ * Title with teal accent, 3 cards with colored square icon badges + horizontal title
+ */
+
+import type { ServiceCardsComponentFields } from '@/lib/contentful';
+
+export interface Props {
+  fields: ServiceCardsComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const services = (fields.serviceCards || []).filter((s: any) => s?.fields);
+
+const cardStyles = [
+  {
+    bg: 'bg-[#00C4CC]',
+    textColor: 'text-[#FAFFFE]',
+    icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>`,
+  },
+  {
+    bg: 'bg-[#D4AF37]',
+    textColor: 'text-[#1A1A1A]',
+    icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>`,
+  },
+  {
+    bg: 'bg-[#0D2626]',
+    textColor: 'text-[#FAFFFE]',
+    icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"/></svg>`,
+  },
+];
+---
+
+<section id="services" class="bg-[#F0FAFA]/60 py-32 px-6 relative border-t border-[#1A1A1A]/5 border-b">
+  <div class="max-w-7xl mx-auto">
+
+    {/* Title */}
+    {fields.sectionTitle && (
+      <h2 class="text-5xl md:text-6xl font-normal text-center mb-20 tracking-tight text-[#1A1A1A]">
+        <Fragment set:html={(fields.sectionTitle || '').replace(/\*(.+?)\*/g, '<span class="text-[#00C4CC]">$1</span>')} />
+      </h2>
+    )}
+
+    {/* Cards */}
+    {services.length > 0 && (
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
+        {services.map((service: any, i: number) => {
+          const style = cardStyles[i % cardStyles.length];
+          return (
+            <div class="bg-[#FAFFFE] rounded-3xl p-10 border border-[#1A1A1A]/10 shadow-sm relative flex flex-col transition-transform hover:-translate-y-1">
+              {/* Icon Badge + Title — horizontal layout */}
+              <div class="flex items-center gap-5 mb-8">
+                <div class={`w-16 h-16 ${style.bg} rounded-2xl flex items-center justify-center ${style.textColor} shrink-0`}>
+                  <Fragment set:html={style.icon} />
+                </div>
+                <div>
+                  <h3 class="text-3xl font-normal tracking-tight text-[#1A1A1A]">
+                    {service.fields.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Description */}
+              {service.fields.description && (
+                <p class="text-lg text-[#1A1A1A]/70 leading-relaxed mb-10 flex-grow font-light">
+                  {service.fields.description}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    {/* CTA */}
+    {fields.ctaText && (
+      <div class="text-center">
+        <a
+          href={fields.ctaLink || '#contact'}
+          class="inline-block bg-[#1A1A1A] text-[#FAFFFE] px-10 py-5 rounded-full text-xl font-normal hover:bg-[#333333] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+        >
+          {fields.ctaText}
+        </a>
+      </div>
+    )}
+  </div>
+</section>

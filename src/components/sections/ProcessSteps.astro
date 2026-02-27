@@ -1,0 +1,79 @@
+---
+/**
+ * Process Steps — processStepsComponent
+ * Centered title, 3 step cards with icons in circles, connecting line, dark CTA pill
+ */
+
+import type { ProcessStepsComponentFields } from '@/lib/contentful';
+
+export interface Props {
+  fields: ProcessStepsComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const steps = (fields.steps || [])
+  .filter((s: any) => s?.fields)
+  .sort((a: any, b: any) => (a.fields.stepNumber || 0) - (b.fields.stepNumber || 0));
+
+const stepIcons = [
+  `<svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/></svg>`,
+  `<svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>`,
+  `<svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/></svg>`,
+];
+---
+
+<section id="how-it-works" class="max-w-7xl mx-auto px-6 py-32 border-t border-[#1A1A1A]/5">
+  {/* Header */}
+  {fields.sectionTitle && (
+    <div class="text-center mb-20">
+      <h2 class="text-5xl md:text-6xl font-normal tracking-tight mb-6 text-[#1A1A1A]">
+        {fields.sectionTitle}
+      </h2>
+    </div>
+  )}
+
+  {/* Steps */}
+  {steps.length > 0 && (
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative max-w-5xl mx-auto mb-20">
+      {/* Connecting line */}
+      <div class="hidden md:block absolute top-16 left-[15%] right-[15%] h-0.5 bg-[#00C4CC]/10 -z-10"></div>
+
+      {steps.map((step: any, i: number) => {
+        const num = step.fields.stepNumber || i + 1;
+        return (
+          <div class="text-center bg-[#FAFFFE]/50 backdrop-blur-sm p-4 rounded-3xl">
+            {/* Circle with icon */}
+            <div class="w-32 h-32 mx-auto bg-[#F0FAFA] rounded-full flex items-center justify-center text-[#00C4CC] mb-8 shadow-sm border border-[#00C4CC]/20 relative z-10">
+              <Fragment set:html={stepIcons[i % stepIcons.length]} />
+            </div>
+
+            {/* Title */}
+            <h3 class="text-3xl font-normal tracking-tight mb-4 text-[#1A1A1A]">
+              {num}. {step.fields.title}
+            </h3>
+
+            {/* Description */}
+            {step.fields.description && (
+              <p class="text-lg text-[#1A1A1A]/70 font-light leading-relaxed">
+                {step.fields.description}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  {/* CTA */}
+  {fields.ctaText && (
+    <div class="text-center">
+      <a
+        href={fields.ctaLink || '#contact'}
+        class="inline-block bg-[#1A1A1A] text-[#FAFFFE] px-10 py-5 rounded-full text-xl font-normal hover:bg-[#333333] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+      >
+        {fields.ctaText}
+      </a>
+    </div>
+  )}
+</section>

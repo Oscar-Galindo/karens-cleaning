@@ -423,6 +423,160 @@ export function getRichTextPlainText(richText: any): string {
 }
 
 // ============================================================================
+// KAREN'S CLEANING HOMEPAGE - Component-Based Page Types
+// ============================================================================
+
+export interface SeoMetadataFields {
+  title: string;
+  description: string;
+  ogImage?: Asset;
+}
+
+export interface HeroComponentFields {
+  title: string;
+  subtitle?: string;
+  primaryCtaText?: string;
+  primaryCtaLink?: string;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+}
+
+export interface BenefitItemFields {
+  title: string;
+  description: string;
+  icon?: Asset;
+}
+
+export interface BenefitsGridComponentFields {
+  sectionTitle?: string;
+  description?: string;
+  benefits: any[]; // Resolved linked entries
+}
+
+export interface ProcessStepFields {
+  stepNumber: number;
+  title: string;
+  description: string;
+  icon?: Asset;
+}
+
+export interface ProcessStepsComponentFields {
+  sectionTitle?: string;
+  steps: any[]; // Resolved linked entries
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export interface ServiceCardFields {
+  title: string;
+  description?: string;
+  bulletPoints?: string[];
+}
+
+export interface ServiceCardsComponentFields {
+  sectionTitle?: string;
+  serviceCards: any[]; // Resolved linked entries
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export interface TestimonialComponentFields {
+  quote: string;
+  author?: string;
+  authorTitle?: string;
+}
+
+export interface ContentWithImageComponentFields {
+  title?: string;
+  body?: any; // Rich Text
+  image?: Asset;
+  imagePosition?: 'left' | 'right';
+  ctaText?: string;
+  ctaUrl?: string;
+}
+
+export interface FaqItemFields {
+  question: string;
+  answer: string;
+}
+
+export interface FaqComponentFields {
+  sectionTitle?: string;
+  faqs: any[]; // Resolved linked entries
+}
+
+export type PageComponent =
+  | { contentType: 'heroComponent'; fields: HeroComponentFields }
+  | { contentType: 'benefitsGridComponent'; fields: BenefitsGridComponentFields }
+  | { contentType: 'processStepsComponent'; fields: ProcessStepsComponentFields }
+  | { contentType: 'serviceCardsComponent'; fields: ServiceCardsComponentFields }
+  | { contentType: 'testimonialComponent'; fields: TestimonialComponentFields }
+  | { contentType: 'contentWithImageComponent'; fields: ContentWithImageComponentFields }
+  | { contentType: 'faqComponent'; fields: FaqComponentFields };
+
+export interface HomePageData {
+  title: string;
+  slug: string;
+  seo?: SeoMetadataFields;
+  components: PageComponent[];
+}
+
+/**
+ * Get Home Page — fetches page with slug "home" and transforms components
+ */
+export async function getHomePageData(): Promise<HomePageData | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'page',
+      'fields.slug': 'home',
+      include: 3,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) {
+      console.error('No page found with slug "home"');
+      return null;
+    }
+
+    const entry = entries.items[0];
+    const fields = entry.fields as any;
+
+    // Extract SEO linked entry
+    let seo: SeoMetadataFields | undefined;
+    if (fields.seo?.fields) {
+      seo = {
+        title: fields.seo.fields.title || '',
+        description: fields.seo.fields.description || '',
+        ogImage: fields.seo.fields.ogImage,
+      };
+    }
+
+    // Transform components array — filter out unresolved links
+    const components: PageComponent[] = [];
+    const rawComponents = fields.components || [];
+
+    for (const comp of rawComponents) {
+      // Skip unresolved links (no fields means Contentful couldn't resolve it)
+      if (!comp?.sys?.contentType?.sys?.id || !comp?.fields) continue;
+
+      const ct = comp.sys.contentType.sys.id as string;
+      components.push({ contentType: ct, fields: comp.fields } as PageComponent);
+    }
+
+    return {
+      title: fields.title || fields.name || 'Home',
+      slug: fields.slug || 'home',
+      seo,
+      components,
+    };
+  } catch (error: any) {
+    console.error('Error fetching home page:', error.message);
+    return null;
+  }
+}
+
+// ============================================================================
 // NEW FETCHERS - Minimalist Homepage V2
 // ============================================================================
 

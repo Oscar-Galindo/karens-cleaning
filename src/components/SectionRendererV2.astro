@@ -1,0 +1,32 @@
+---
+/**
+ * Section Renderer V2
+ * Dispatches page components to the matching section component.
+ * Used by the new homepage; does not affect [...slug].astro which uses V1.
+ */
+
+import type { PageComponent } from '@/lib/contentful';
+import HeroSection from '@/components/sections/HeroSection.astro';
+import BenefitsGrid from '@/components/sections/BenefitsGrid.astro';
+import ProcessSteps from '@/components/sections/ProcessSteps.astro';
+import ServiceCards from '@/components/sections/ServiceCards.astro';
+import Testimonial from '@/components/sections/Testimonial.astro';
+import ContentWithImage from '@/components/sections/ContentWithImage.astro';
+import FaqAccordion from '@/components/sections/FaqAccordion.astro';
+
+export interface Props {
+  component: PageComponent;
+  index?: number;
+}
+
+const { component, index = 0 } = Astro.props;
+const ct = component.contentType;
+---
+
+{ct === 'heroComponent' && <HeroSection fields={component.fields} />}
+{ct === 'benefitsGridComponent' && <BenefitsGrid fields={component.fields} />}
+{ct === 'processStepsComponent' && <ProcessSteps fields={component.fields} />}
+{ct === 'serviceCardsComponent' && <ServiceCards fields={component.fields} />}
+{ct === 'testimonialComponent' && <Testimonial fields={component.fields} />}
+{ct === 'contentWithImageComponent' && <ContentWithImage fields={component.fields} />}
+{ct === 'faqComponent' && <FaqAccordion fields={component.fields} />}

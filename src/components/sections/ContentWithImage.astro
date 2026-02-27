@@ -1,0 +1,76 @@
+---
+/**
+ * Content With Image — contentWithImageComponent
+ * 2-column: image with decorative border, text alongside
+ */
+
+import type { ContentWithImageComponentFields } from '@/lib/contentful';
+import { getAssetUrl } from '@/lib/contentful';
+import { CloudinaryPresets } from '@/lib/cloudinary';
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+
+export interface Props {
+  fields: ContentWithImageComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const imageUrl = getAssetUrl(fields.image);
+const image = imageUrl ? CloudinaryPresets.hero(imageUrl, 800) : null;
+const isImageLeft = fields.imagePosition !== 'right';
+
+let bodyHtml = '';
+if (fields.body) {
+  try {
+    bodyHtml = documentToHtmlString(fields.body);
+  } catch {
+    bodyHtml = '';
+  }
+}
+---
+
+<section id="about" class="py-32 px-6 border-b border-[#1A1A1A]/5">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-20">
+
+    {/* Image */}
+    {image && (
+      <div class:list={['w-full md:w-5/12 relative', isImageLeft ? 'md:order-1' : 'md:order-2']}>
+        <div class="absolute inset-5 border border-[#00C4CC]/20 rounded-[2.5rem] z-0"></div>
+        <img
+          src={image}
+          alt={fields.title || ''}
+          class="w-full aspect-square md:aspect-[4/5] object-cover rounded-3xl shadow-lg relative z-10"
+          loading="lazy"
+        />
+      </div>
+    )}
+
+    {/* Text */}
+    <div class:list={['w-full', image ? 'md:w-7/12' : '', isImageLeft ? 'md:order-2' : 'md:order-1']}>
+      {fields.title && (
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight mb-10 text-[#1A1A1A]">
+          {fields.title}
+        </h2>
+      )}
+
+      {bodyHtml && (
+        <div
+          class="space-y-8 text-xl text-[#1A1A1A]/70 leading-relaxed font-light [&_p]:mb-0 [&_a]:text-[#00C4CC] [&_a]:hover:text-[#00898F]"
+          set:html={bodyHtml}
+        />
+      )}
+
+      {fields.ctaText && (
+        <div class="mt-10">
+          <a
+            href={fields.ctaUrl || '#contact'}
+            class="inline-block bg-[#1A1A1A] text-[#FAFFFE] px-10 py-5 rounded-full text-xl font-normal hover:bg-[#333333] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          >
+            {fields.ctaText}
+          </a>
+        </div>
+      )}
+    </div>
+
+  </div>
+</section>

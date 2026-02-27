@@ -16,8 +16,8 @@ export interface Props {
 }
 
 const {
-  title = 'Your Site Name - Grow Your Business Online',
-  description = 'We help businesses thrive in the digital landscape with data-driven marketing strategies.',
+  title = "Karen's Cleaning — Trusted Home Cleaning Services",
+  description = "Professional, reliable house cleaning services. Book your free estimate today.",
   image = '/og-image.jpg',
   noIndex = false,
   canonicalUrl,
@@ -61,7 +61,7 @@ const ogImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#00C4CC" />
     
     <!-- Fonts - Plus Jakarta Sans + Inter (non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -82,16 +82,11 @@ const ogImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "Your Site Name",
+      "@type": "LocalBusiness",
+      "name": "Karen's Cleaning",
       "description": description,
-      "url": "https://yourdomain.com",
-      "logo": "https://yourdomain.com/logo.png",
-      "founder": {
-        "@type": "Person",
-        "name": "Your Name"
-      },
-      "serviceType": "Digital Operations Management",
+      "url": siteUrl,
+      "serviceType": "House Cleaning Service",
       "areaServed": "US",
       "priceRange": "$$"
     })} />
@@ -109,7 +104,7 @@ const ogImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
     )}
   </head>
   
-  <body class="antialiased bg-neutral-50 text-neutral-700">
+  <body class="antialiased text-[#1A1A1A]" style="background-color: #FAFFFE;">
     <!-- Google Tag Manager (noscript) -->
     {import.meta.env.GTM_CONTAINER_ID && (
       <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${import.meta.env.GTM_CONTAINER_ID}`}

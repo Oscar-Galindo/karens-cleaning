@@ -1,0 +1,46 @@
+---
+/**
+ * FAQ Accordion — faqComponent
+ * Centered title, rounded card accordions with chevron icons
+ */
+
+import type { FaqComponentFields } from '@/lib/contentful';
+
+export interface Props {
+  fields: FaqComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const items = (fields.faqs || []).filter((item: any) => item?.fields);
+---
+
+<section class="max-w-4xl mx-auto px-6 py-32">
+  {/* Header */}
+  {fields.sectionTitle && (
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight mb-6 text-[#1A1A1A]">
+        {fields.sectionTitle}
+      </h2>
+    </div>
+  )}
+
+  {/* Accordion Items */}
+  {items.length > 0 && (
+    <div class="space-y-5">
+      {items.map((item: any) => (
+        <details class="group border border-[#1A1A1A]/10 rounded-2xl overflow-hidden transition-all duration-300" style="background: rgba(250,255,254,0.8); backdrop-filter: blur(4px);">
+          <summary class="flex cursor-pointer items-center justify-between gap-2 p-8 text-[#1A1A1A] font-normal text-xl select-none hover:bg-[#F0FAFA] transition-colors [&::-webkit-details-marker]:hidden list-none">
+            <span class="tracking-tight">{item.fields.question}</span>
+            <svg class="w-6 h-6 text-[#00C4CC] transition duration-300 group-open:-rotate-180 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+            </svg>
+          </summary>
+          <div class="px-8 pb-8 text-[#1A1A1A]/70 text-lg font-light leading-relaxed border-t border-[#1A1A1A]/5 pt-6 mt-2">
+            {item.fields.answer}
+          </div>
+        </details>
+      ))}
+    </div>
+  )}
+</section>

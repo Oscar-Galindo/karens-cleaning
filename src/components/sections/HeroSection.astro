@@ -1,93 +1,83 @@
 ---
 /**
- * Hero Section - Your Site Name
- * 
- * Full-height hero with gradient background, headline, and CTAs
+ * Hero Section — heroComponent
+ * Centered text, gradient accent, dark pill CTAs, full-width hero image with fade
  */
 
-import Container from '@/components/ui/Container.astro';
-import Button from '@/components/ui/Button.astro';
-import Badge from '@/components/ui/Badge.astro';
-import Icon from '@/components/ui/Icon.astro';
-import type { HeroSection as HeroType } from '@/lib/contentful';
+import type { HeroComponentFields } from '@/lib/contentful';
 
-export interface Props extends Partial<HeroType> {
-  class?: string;
+export interface Props {
+  fields: HeroComponentFields;
 }
 
-const {
-  badge,
-  headline,
-  subheadline,
-  ctaText,
-  ctaUrl,
-  secondaryCtaText,
-  secondaryCtaUrl,
-  class: className = '',
-} = Astro.props;
+const { fields } = Astro.props;
+
+const rawTitle = fields.title || '';
+const dotIdx = rawTitle.indexOf('.');
+let line1 = rawTitle;
+let line2 = '';
+if (dotIdx > 0 && dotIdx < rawTitle.length - 1) {
+  line1 = rawTitle.substring(0, dotIdx + 1);
+  line2 = rawTitle.substring(dotIdx + 1).trim();
+  line2 = line2.charAt(0).toUpperCase() + line2.slice(1);
+}
 ---
 
-<section
-  class:list={[
-    'relative min-h-[90vh] flex items-center overflow-hidden',
-    'bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900',
-    className
-  ]}
->
-  <!-- Decorative Background Shapes -->
-  <div class="absolute -top-20 -right-20 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl" aria-hidden="true"></div>
-  <div class="absolute -bottom-32 -left-32 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl" aria-hidden="true"></div>
+<section class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden flex flex-col items-center justify-center text-center px-6">
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-lg h-[400px] bg-[#00C4CC]/20 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-  <Container>
-    <div class="text-center py-20 animate-fade-in">
-      <!-- Badge -->
-      {badge && (
-        <Badge
-          variant="neutral"
-          class="bg-white/20 text-white backdrop-blur-sm mb-6 animate-slide-up"
-        >
-          {badge}
-        </Badge>
-      )}
+  {/* Badge */}
+  <a href="#about" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#00C4CC]/5 text-[#00898F] text-base font-normal mb-8 border border-[#00C4CC]/20 hover:bg-[#00C4CC]/10 transition-colors shadow-sm">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>
+    <span>Top-rated cleaning service in Ocean, NJ</span>
+    <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+  </a>
 
-      <!-- Headline -->
-      <h1 class="heading-1 text-white mb-6 max-w-4xl mx-auto animate-slide-up" style="animation-delay: 100ms">
-        {headline}
-      </h1>
+  {/* Headline */}
+  <h1 class="text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-[1.1] md:leading-[1.05] mb-6 text-[#1A1A1A] max-w-7xl">
+    {line1}<br class="hidden md:block" />
+    {line2 && (
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00C4CC] to-[#00898F]">{line2}</span>
+    )}
+  </h1>
 
-      <!-- Subheadline -->
-      <p class="body-lg text-primary-100 max-w-2xl mx-auto mb-8 animate-slide-up" style="animation-delay: 200ms">
-        {subheadline}
-      </p>
+  {/* Subtitle */}
+  {fields.subtitle && (
+    <p class="text-2xl md:text-3xl text-[#1A1A1A]/70 mb-10 max-w-5xl leading-relaxed font-light">
+      {fields.subtitle}
+    </p>
+  )}
 
-      <!-- CTAs -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style="animation-delay: 300ms">
-        <Button
-          variant="secondary"
-          size="lg"
-          href={ctaUrl}
-        >
-          {ctaText}
-        </Button>
+  {/* CTAs */}
+  <div class="flex flex-col sm:flex-row items-center gap-4 z-10 w-full sm:w-auto">
+    {fields.primaryCtaText && (
+      <a
+        href={fields.primaryCtaLink || '#contact'}
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1A1A1A] text-[#FAFFFE] px-8 py-4 rounded-full text-xl font-normal hover:bg-[#333333] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+      >
+        {fields.primaryCtaText}
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </a>
+    )}
+    {fields.secondaryCtaText && (
+      <a
+        href={fields.secondaryCtaLink || '#how-it-works'}
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FAFFFE] text-[#1A1A1A] border border-[#1A1A1A]/10 px-8 py-4 rounded-full text-xl font-normal hover:bg-[#F0FAFA] transition-all shadow-sm"
+      >
+        {fields.secondaryCtaText}
+      </a>
+    )}
+  </div>
 
-        {secondaryCtaText && secondaryCtaUrl && (
-          <Button
-            variant="ghost"
-            size="lg"
-            href={secondaryCtaUrl}
-            class="bg-white/10 text-white hover:bg-white/20 border-0"
-            icon="play"
-            iconPosition="left"
-          >
-            {secondaryCtaText}
-          </Button>
-        )}
-      </div>
-
-      <!-- Scroll Indicator -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <Icon name="chevron-down" size="xl" class="text-white/60" />
-      </div>
-    </div>
-  </Container>
+  {/* Full-width Hero Image with gradient fade */}
+  <div class="w-full max-w-[1440px] mx-auto mt-16 md:mt-24 relative z-10 group">
+    <div class="absolute -inset-6 bg-gradient-to-b from-[#00C4CC]/20 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700 rounded-[3rem] -z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#FAFFFE] via-transparent to-transparent z-20 h-full w-full bottom-0 rounded-3xl md:rounded-[2.5rem] pointer-events-none"></div>
+    <img
+      src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop"
+      alt="Spotless modern living room"
+      class="w-full h-[500px] md:h-[700px] lg:h-[800px] object-cover rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-[#1A1A1A]/10 relative z-10"
+      loading="eager"
+    />
+  </div>
 </section>
