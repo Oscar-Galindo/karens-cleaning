@@ -1,0 +1,790 @@
+---
+/**
+ * Book Page — /book
+ * Fetches the "book" page from Contentful and renders a multi-step booking form:
+ * - Page hero with breadcrumb, trust micro-row
+ * - Left: Multi-step form card (4 steps: Service, Details, Schedule, Contact)
+ * - Right: Sticky sidebar with benefits checklist + testimonial + contact info
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navigation from '@/components/global/Navigation.astro';
+import SiteFooter from '@/components/global/SiteFooter.astro';
+import { getPageData, getAssetUrl } from '@/lib/contentful';
+import type { TrustBadgesComponentFields, ServiceCardsComponentFields, BenefitsGridComponentFields, TestimonialComponentFields } from '@/lib/contentful';
+
+const page = await getPageData('book');
+
+const seoTitle = page?.seo?.metaTitle || "Book Free Estimate — Karen's Cleaning";
+const seoDescription = page?.seo?.metaDescription || "Book your free cleaning estimate. No commitment required. We'll get back to you the same day.";
+const seoImage = page?.seo?.ogImage ? getAssetUrl(page.seo.ogImage) : undefined;
+
+// Extract components by type
+const trustBadges = page?.components.find(c => c.contentType === 'trustBadgesComponent') as { contentType: 'trustBadgesComponent'; fields: TrustBadgesComponentFields } | undefined;
+const serviceCards = page?.components.find(c => c.contentType === 'serviceCardsComponent') as { contentType: 'serviceCardsComponent'; fields: ServiceCardsComponentFields } | undefined;
+const benefitsGrid = page?.components.find(c => c.contentType === 'benefitsGridComponent') as { contentType: 'benefitsGridComponent'; fields: BenefitsGridComponentFields } | undefined;
+const testimonial = page?.components.find(c => c.contentType === 'testimonialComponent') as { contentType: 'testimonialComponent'; fields: TestimonialComponentFields } | undefined;
+
+// Trust badge icons (mapped by index)
+const badgeIcons = [
+  'solar:shield-check-linear',
+  'solar:bolt-linear',
+  'solar:star-shine-linear',
+];
+const badgeIconColors = ['text-[#00C4CC]', 'text-[#00C4CC]', 'text-[#D4AF37]'];
+
+// Service card icons (mapped by title keyword)
+const serviceIconMap: Record<string, string> = {
+  'standard': 'solar:home-2-linear',
+  'house': 'solar:home-2-linear',
+  'deep': 'solar:layers-minimalistic-linear',
+  'post-construction': 'solar:hammer-linear',
+  'construction': 'solar:hammer-linear',
+  'move-in': 'solar:box-linear',
+  'move in': 'solar:box-linear',
+  'move-out': 'solar:move-to-folder-linear',
+  'move out': 'solar:move-to-folder-linear',
+  'not sure': 'solar:question-circle-linear',
+};
+const defaultServiceIcons = ['solar:home-2-linear', 'solar:layers-minimalistic-linear', 'solar:hammer-linear', 'solar:box-linear', 'solar:move-to-folder-linear', 'solar:question-circle-linear'];
+
+const webhookUrl = import.meta.env.PUBLIC_MAKE_WEBHOOK_URL || '';
+
+// Service card subtitles (mapped by title keyword)
+const serviceSubtitleMap: Record<string, string> = {
+  'standard': 'Weekly or bi-weekly',
+  'house': 'Weekly or bi-weekly',
+  'deep': 'First-time or overdue',
+  'post-construction': 'After renovation',
+  'construction': 'After renovation',
+  'move-in': 'New home start',
+  'move in': 'New home start',
+  'move-out': 'Leaving a home',
+  'move out': 'Leaving a home',
+  'not sure': 'Help me choose',
+};
+
+function getServiceIcon(title: string, index: number): string {
+  const lower = title.toLowerCase();
+  for (const [key, icon] of Object.entries(serviceIconMap)) {
+    if (lower.includes(key)) return icon;
+  }
+  return defaultServiceIcons[index % defaultServiceIcons.length];
+}
+
+function getServiceSubtitle(title: string): string {
+  const lower = title.toLowerCase();
+  for (const [key, subtitle] of Object.entries(serviceSubtitleMap)) {
+    if (lower.includes(key)) return subtitle;
+  }
+  return '';
+}
+
+const services = (serviceCards?.fields.serviceCards || []).filter((s: any) => s?.fields);
+const benefits = (benefitsGrid?.fields.benefits || []).filter((b: any) => b?.fields);
+const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  image={seoImage || undefined}
+>
+  <Navigation currentPath="/book" />
+
+  {/* Page Hero */}
+  <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
+    <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#00C4CC]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
+      <span class="text-zinc-400">Home</span>
+      <iconify-icon icon="solar:alt-arrow-right-linear" class="text-zinc-300"></iconify-icon>
+      <span class="text-zinc-900">Book</span>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-medium tracking-tighter text-zinc-900 mb-6 max-w-3xl">
+      {page?.title || 'Book Your Free Estimate'}
+    </h1>
+    <p class="text-lg md:text-xl text-zinc-500 font-light max-w-2xl leading-relaxed">
+      Takes less than 2 minutes. No commitment required. We'll get back to you the same day.
+    </p>
+
+    {/* Trust micro-row */}
+    {badges.length > 0 && (
+      <div class="inline-flex gap-6 mt-6 text-sm text-zinc-400 font-light flex-wrap justify-center items-center">
+        {badges.map((badge: any, i: number) => (
+          <div class="flex items-center gap-1.5">
+            <iconify-icon icon={badgeIcons[i % badgeIcons.length]} class={`${badgeIconColors[i % badgeIconColors.length]} text-base`}></iconify-icon>
+            <span>{badge.fields.text}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+
+  {/* Booking Layout */}
+  <section class="max-w-7xl mx-auto px-6 py-16 flex flex-col lg:flex-row gap-8 pb-32">
+
+    {/* Left: Multi-step Form Card */}
+    <div class="flex-1 bg-white rounded-[2.5rem] ring-1 ring-zinc-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 md:p-12 relative overflow-hidden">
+
+      {/* Progress Indicator */}
+      <div class="flex items-center gap-0 mb-12 relative z-10 w-full" id="progress-container">
+        {/* Step 1 */}
+        <div class="relative flex flex-col items-center flex-shrink-0 w-10">
+          <div id="step-indicator-1" class="w-10 h-10 rounded-full bg-[#0D2626] text-white text-sm font-medium flex items-center justify-center shadow-sm transition-colors duration-300">1</div>
+          <span id="step-label-1" class="absolute top-12 text-xs text-zinc-900 font-medium whitespace-nowrap">Service</span>
+        </div>
+        <div class="flex-1 h-px bg-zinc-200 mx-2 transition-colors duration-300" id="line-1"></div>
+
+        {/* Step 2 */}
+        <div class="relative flex flex-col items-center flex-shrink-0 w-10">
+          <div id="step-indicator-2" class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-400 text-sm font-medium flex items-center justify-center transition-colors duration-300">2</div>
+          <span id="step-label-2" class="absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap">Details</span>
+        </div>
+        <div class="flex-1 h-px bg-zinc-200 mx-2 transition-colors duration-300" id="line-2"></div>
+
+        {/* Step 3 */}
+        <div class="relative flex flex-col items-center flex-shrink-0 w-10">
+          <div id="step-indicator-3" class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-400 text-sm font-medium flex items-center justify-center transition-colors duration-300">3</div>
+          <span id="step-label-3" class="absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap">Schedule</span>
+        </div>
+        <div class="flex-1 h-px bg-zinc-200 mx-2 transition-colors duration-300" id="line-3"></div>
+
+        {/* Step 4 */}
+        <div class="relative flex flex-col items-center flex-shrink-0 w-10">
+          <div id="step-indicator-4" class="w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-400 text-sm font-medium flex items-center justify-center transition-colors duration-300">4</div>
+          <span id="step-label-4" class="absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap">Contact</span>
+        </div>
+      </div>
+
+      <div class="mt-20 sm:mt-16"></div>
+
+      {/* Form Content wrapper */}
+      <div class="relative w-full">
+
+        {/* STEP 1: SERVICE */}
+        <div id="step-1" class="block animate-[fadeIn_0.3s_ease-out]">
+          <h3 class="text-2xl font-medium tracking-tighter text-zinc-900 mb-2">{serviceCards?.fields.sectionTitle || 'What do you need cleaned?'}</h3>
+          <p class="text-sm text-zinc-400 font-light mb-8">Select all that apply.</p>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {services.map((service: any, i: number) => {
+              const icon = getServiceIcon(service.fields.title, i);
+              const subtitle = getServiceSubtitle(service.fields.title) || service.fields.description || '';
+              return (
+                <div class="service-card border border-zinc-200 hover:border-[#00C4CC]/50 hover:bg-[#00C4CC]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative" data-service-card>
+                  <div class="absolute top-3 right-3 w-5 h-5 rounded-full border border-zinc-200 flex items-center justify-center check-icon hidden">
+                    <iconify-icon icon="solar:check-linear" class="text-white text-xs"></iconify-icon>
+                  </div>
+                  <div class="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center icon-bg">
+                    <iconify-icon icon={icon} class="text-xl text-zinc-500 icon-svg"></iconify-icon>
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-zinc-900">{service.fields.title}</div>
+                    <div class="text-xs text-zinc-400 font-light mt-0.5">{subtitle}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div id="step-1-error" class="text-sm text-red-500 font-light mt-6 hidden"></div>
+
+          <div class="flex justify-end mt-10">
+            <button id="btn-next-2" class="inline-flex items-center gap-2 bg-[#0D2626] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#1A4D4D] transition-all ring-1 ring-zinc-900/5 shadow-sm">
+              Next: Job Details <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        {/* STEP 2: DETAILS */}
+        <div id="step-2" class="hidden animate-[fadeIn_0.3s_ease-out]">
+          <h3 class="text-2xl font-medium tracking-tighter text-zinc-900 mb-8">Tell us about the space</h3>
+
+          <div class="space-y-6">
+            <div>
+              <label class="text-sm font-medium text-zinc-700 mb-2 block">Service Address or ZIP Code</label>
+              <input id="field-address" type="text" placeholder="123 Main St, Ocean NJ" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+            </div>
+
+            <div>
+              <label class="text-sm font-medium text-zinc-700 mb-2 block">Home Size</label>
+              <div class="relative">
+                <select id="field-homeSize" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all appearance-none cursor-pointer">
+                  <option value="" disabled selected>Select size</option>
+                  <option>Studio / 1 Bedroom</option>
+                  <option>2 Bedrooms</option>
+                  <option>3 Bedrooms</option>
+                  <option>4+ Bedrooms</option>
+                  <option>Commercial / Office</option>
+                </select>
+                <iconify-icon icon="solar:alt-arrow-down-linear" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"></iconify-icon>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm font-medium text-zinc-700 mb-2 block">Anything specific we should know? <span class="text-zinc-400 font-light text-xs ml-1">(Optional)</span></label>
+              <textarea id="field-notes" rows="3" placeholder="e.g. We have a dog, hardwood floors throughout, code for entry is 1234" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all resize-none"></textarea>
+            </div>
+
+
+          </div>
+
+          <div id="step-2-error" class="text-sm text-red-500 font-light mt-6 hidden"></div>
+
+          <div class="flex justify-between items-center mt-10">
+            <button id="btn-prev-1" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors font-light flex items-center gap-1">
+              <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Back
+            </button>
+            <button id="btn-next-3" class="inline-flex items-center gap-2 bg-[#0D2626] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#1A4D4D] transition-all ring-1 ring-zinc-900/5 shadow-sm">
+              Next: Schedule <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        {/* STEP 3: SCHEDULE */}
+        <div id="step-3" class="hidden animate-[fadeIn_0.3s_ease-out]">
+          <h3 class="text-2xl font-medium tracking-tighter text-zinc-900 mb-8">When would you like service?</h3>
+
+          {/* Calendar UI */}
+          <div class="bg-white rounded-2xl border border-zinc-200 p-6">
+            <div class="flex justify-between items-center mb-6">
+              <div class="text-base font-medium text-zinc-900" id="calendar-month-label"></div>
+              <div class="flex gap-2">
+                <button id="cal-prev" class="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:bg-zinc-50 transition-colors">
+                  <iconify-icon icon="solar:alt-arrow-left-linear" class="text-zinc-500"></iconify-icon>
+                </button>
+                <button id="cal-next" class="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center hover:bg-zinc-50 transition-colors">
+                  <iconify-icon icon="solar:alt-arrow-right-linear" class="text-zinc-500"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-7 mb-2">
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Su</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Mo</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Tu</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">We</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Th</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Fr</div>
+              <div class="text-xs text-zinc-400 font-light text-center py-2">Sa</div>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1" id="calendar-grid"></div>
+          </div>
+
+          {/* Time Preferences */}
+          <div class="mt-8">
+            <label class="text-sm font-medium text-zinc-700 mb-3 block">Preferred time of day</label>
+            <div class="flex gap-2 flex-wrap">
+              <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4CC] bg-[#00C4CC]/5 text-[#00AAB0] text-sm font-light cursor-pointer transition-all" data-time-pill>
+                <iconify-icon icon="solar:sun-fog-linear"></iconify-icon> Morning (9am – 12pm)
+              </div>
+              <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-200 text-zinc-600 text-sm font-light cursor-pointer hover:border-zinc-300 transition-all" data-time-pill>
+                <iconify-icon icon="solar:sun-linear"></iconify-icon> Afternoon (12pm – 5pm)
+              </div>
+              <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-200 text-zinc-600 text-sm font-light cursor-pointer hover:border-zinc-300 transition-all" data-time-pill>
+                <iconify-icon icon="solar:calendar-linear"></iconify-icon> I'm Flexible
+              </div>
+            </div>
+          </div>
+
+          <div id="step-3-error" class="text-sm text-red-500 font-light mt-6 hidden"></div>
+
+          <div class="flex justify-between items-center mt-10">
+            <button id="btn-prev-2" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors font-light flex items-center gap-1">
+              <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Back
+            </button>
+            <button id="btn-next-4" class="inline-flex items-center gap-2 bg-[#0D2626] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#1A4D4D] transition-all ring-1 ring-zinc-900/5 shadow-sm">
+              Next: Contact Info <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+            </button>
+          </div>
+        </div>
+
+        {/* STEP 4: CONTACT */}
+        <div id="step-4" class="hidden animate-[fadeIn_0.3s_ease-out]">
+          <h3 class="text-2xl font-medium tracking-tighter text-zinc-900 mb-8">Last step — how do we reach you?</h3>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <input id="field-firstName" type="text" placeholder="First Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+              </div>
+              <div>
+                <input id="field-lastName" type="text" placeholder="Last Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+              </div>
+            </div>
+
+            <div>
+              <input id="field-phone" type="tel" placeholder="(732) 000-0000" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+            </div>
+
+            <div>
+              <input id="field-email" type="email" placeholder="Email Address" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+            </div>
+
+            <div class="pt-2">
+              <div class="relative">
+                <select id="field-hearAboutUs" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all appearance-none cursor-pointer">
+                  <option value="" disabled selected>How did you hear about us? (Optional)</option>
+                  <option>Google Search</option>
+                  <option>Friend or Neighbor</option>
+                  <option>Facebook</option>
+                  <option>Flyer or Business Card</option>
+                  <option>Returning Client</option>
+                  <option>Other</option>
+                </select>
+                <iconify-icon icon="solar:alt-arrow-down-linear" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"></iconify-icon>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 mt-6">
+              <iconify-icon icon="solar:lock-linear" class="text-zinc-300 text-sm"></iconify-icon>
+              <span class="text-xs text-zinc-400 font-light">We never share your information.</span>
+            </div>
+          </div>
+
+          <button id="btn-submit" data-webhook={webhookUrl} class="inline-flex items-center justify-center gap-2 w-full bg-[#00C4CC] text-[#FAFFFE] px-8 py-4 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] mt-8">
+            Send My Estimate Request <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+          </button>
+
+          <div id="submit-error" class="text-center text-sm text-red-500 font-light mt-3 hidden">
+            Something went wrong. Please try again.
+          </div>
+
+          <div class="text-center text-xs text-zinc-400 font-light mt-4">
+            No commitment required. We'll respond within a few hours — Mon through Sat, 9am to 5pm.
+          </div>
+
+          <div class="flex justify-between items-center mt-10">
+            <button id="btn-prev-3" class="text-sm text-zinc-400 hover:text-zinc-600 transition-colors font-light flex items-center gap-1">
+              <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon> Back
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {/* Right: Sidebar Trust Panel */}
+    <div class="w-full lg:w-80 xl:w-96">
+      <div class="bg-[#FAFFFE] rounded-[2rem] ring-1 ring-zinc-200/60 p-8 sticky top-28">
+
+        <span class="bg-[#00C4CC]/10 border border-[#00C4CC]/20 text-[#00AAB0] text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6">
+          Karen's Guarantee
+        </span>
+
+        <h3 class="text-xl font-medium tracking-tighter text-zinc-900 mb-6">{benefitsGrid?.fields.sectionTitle || "Why Families Choose Karen's"}</h3>
+
+        <div class="space-y-4">
+          {benefits.map((benefit: any) => (
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-zinc-50 border border-zinc-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <iconify-icon icon="solar:check-read-linear" class="text-[#00C4CC] text-sm"></iconify-icon>
+              </div>
+              <span class="text-sm text-zinc-600 font-light">{benefit.fields.title}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="border-t border-zinc-100 my-8"></div>
+
+        {/* Testimonial */}
+        {testimonial && (
+          <div class="bg-white rounded-2xl ring-1 ring-zinc-200/60 p-6">
+            <div class="flex gap-0.5 mb-4">
+              <iconify-icon icon="solar:star-bold" class="text-[#D4AF37] text-sm"></iconify-icon>
+              <iconify-icon icon="solar:star-bold" class="text-[#D4AF37] text-sm"></iconify-icon>
+              <iconify-icon icon="solar:star-bold" class="text-[#D4AF37] text-sm"></iconify-icon>
+              <iconify-icon icon="solar:star-bold" class="text-[#D4AF37] text-sm"></iconify-icon>
+              <iconify-icon icon="solar:star-bold" class="text-[#D4AF37] text-sm"></iconify-icon>
+            </div>
+            <p class="text-sm text-zinc-600 font-light italic leading-relaxed">
+              "{testimonial.fields.quote}"
+            </p>
+            <div class="flex items-center gap-2 mt-4">
+              <div class="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center">
+                <iconify-icon icon="solar:user-linear" class="text-zinc-400 text-xs"></iconify-icon>
+              </div>
+              <span class="text-xs text-zinc-400 font-light">{testimonial.fields.author}{testimonial.fields.authorTitle ? `, ${testimonial.fields.authorTitle}` : ''}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Contact Info */}
+        <div class="mt-8 space-y-3">
+          <div class="flex items-center gap-2 text-sm font-light">
+            <iconify-icon icon="solar:phone-linear" class="text-[#00C4CC] text-base"></iconify-icon>
+            <span class="text-zinc-500">(732) 693-2350</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm font-light">
+            <iconify-icon icon="solar:clock-circle-linear" class="text-[#00C4CC] text-base"></iconify-icon>
+            <span class="text-zinc-500">Mon – Sat, 9am – 5pm</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .bg-mesh {
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // Form Step Navigation
+  function goToStep(step: number) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`step-${i}`);
+      if (el) {
+        el.classList.add('hidden');
+        el.classList.remove('block');
+      }
+    }
+    const target = document.getElementById(`step-${step}`);
+    if (target) {
+      target.classList.remove('hidden');
+      target.classList.add('block');
+    }
+    updateProgress(step);
+    document.getElementById('progress-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateProgress(currentStep: number) {
+    for (let i = 1; i <= 4; i++) {
+      const indicator = document.getElementById(`step-indicator-${i}`);
+      const label = document.getElementById(`step-label-${i}`);
+      const line = document.getElementById(`line-${i}`);
+
+      if (!indicator || !label) continue;
+
+      if (i < currentStep) {
+        indicator.className = "w-10 h-10 rounded-full bg-[#00C4CC] text-white text-sm font-medium flex items-center justify-center transition-colors duration-300";
+        indicator.innerHTML = '<iconify-icon icon="solar:check-linear" class="text-lg"></iconify-icon>';
+        label.className = "absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap";
+        if (line) line.className = "flex-1 h-px bg-[#00C4CC] mx-2 transition-colors duration-300";
+      } else if (i === currentStep) {
+        indicator.className = "w-10 h-10 rounded-full bg-[#0D2626] text-white text-sm font-medium flex items-center justify-center shadow-sm transition-colors duration-300";
+        indicator.innerHTML = String(i);
+        label.className = "absolute top-12 text-xs text-zinc-900 font-medium whitespace-nowrap";
+        if (line) line.className = "flex-1 h-px bg-zinc-200 mx-2 transition-colors duration-300";
+      } else {
+        indicator.className = "w-10 h-10 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-400 text-sm font-medium flex items-center justify-center transition-colors duration-300";
+        indicator.innerHTML = String(i);
+        label.className = "absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap";
+        if (line) line.className = "flex-1 h-px bg-zinc-200 mx-2 transition-colors duration-300";
+      }
+    }
+  }
+
+  // Service Selection Toggle
+  document.querySelectorAll('[data-service-card]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const el = card as HTMLElement;
+      const isSelected = el.classList.contains('border-[#00C4CC]');
+      const checkIcon = el.querySelector('.check-icon') as HTMLElement;
+      const iconSvg = el.querySelector('.icon-svg') as HTMLElement;
+
+      if (isSelected) {
+        el.className = "service-card border border-zinc-200 hover:border-[#00C4CC]/50 hover:bg-[#00C4CC]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
+        if (checkIcon) checkIcon.className = "absolute top-3 right-3 w-5 h-5 rounded-full border border-zinc-200 flex items-center justify-center check-icon hidden";
+        if (iconSvg) iconSvg.className = "text-xl text-zinc-500 icon-svg";
+      } else {
+        el.className = "service-card border border-[#00C4CC] bg-[#00C4CC]/5 ring-1 ring-[#00C4CC]/20 rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
+        if (checkIcon) checkIcon.className = "absolute top-3 right-3 w-5 h-5 rounded-full bg-[#00C4CC] flex items-center justify-center check-icon";
+        if (iconSvg) iconSvg.className = "text-xl text-[#00C4CC] icon-svg";
+      }
+    });
+  });
+
+  // Time Preference Selection
+  document.querySelectorAll('[data-time-pill]').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('[data-time-pill]').forEach((p) => {
+        (p as HTMLElement).className = "time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-200 text-zinc-600 text-sm font-light cursor-pointer hover:border-zinc-300 transition-all";
+      });
+      (pill as HTMLElement).className = "time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4CC] bg-[#00C4CC]/5 text-[#00AAB0] text-sm font-light cursor-pointer transition-all";
+    });
+  });
+
+  // Calendar
+  let calYear: number;
+  let calMonth: number;
+  let selectedDay: number | null = null;
+
+  function initCalendar() {
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendar-grid');
+    const label = document.getElementById('calendar-month-label');
+    if (!grid || !label) return;
+
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    label.textContent = `${months[calMonth]} ${calYear}`;
+
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    grid.innerHTML = '';
+
+    // Empty cells for days before the 1st
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'w-9 h-9';
+      grid.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateObj = new Date(calYear, calMonth, day);
+      const cell = document.createElement('div');
+      cell.textContent = String(day);
+
+      if (dateObj < today) {
+        // Past date
+        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto text-zinc-300 cursor-not-allowed';
+      } else if (dateObj.getTime() === today.getTime()) {
+        // Today
+        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto ring-1 ring-[#00C4CC] text-[#00C4CC] font-medium cursor-pointer';
+        cell.addEventListener('click', () => selectDate(cell, day));
+      } else if (selectedDay === day && calMonth === new Date().getMonth() && calYear === new Date().getFullYear()) {
+        // Selected
+        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto bg-[#0D2626] text-white font-medium shadow-sm cursor-pointer transition-colors';
+      } else {
+        // Normal future date
+        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto text-zinc-700 hover:bg-zinc-100 font-light cursor-pointer transition-colors';
+        cell.addEventListener('click', () => selectDate(cell, day));
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function selectDate(_element: HTMLElement, day: number) {
+    selectedDay = day;
+    renderCalendar();
+    // Re-apply selected state
+    const grid = document.getElementById('calendar-grid');
+    if (!grid) return;
+    const cells = grid.children;
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const idx = firstDay + day - 1;
+    if (cells[idx]) {
+      (cells[idx] as HTMLElement).className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto bg-[#0D2626] text-white font-medium shadow-sm cursor-pointer transition-colors';
+    }
+  }
+
+  // Calendar nav
+  document.getElementById('cal-prev')?.addEventListener('click', () => {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    selectedDay = null;
+    renderCalendar();
+  });
+  document.getElementById('cal-next')?.addEventListener('click', () => {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    selectedDay = null;
+    renderCalendar();
+  });
+
+  // Validation helpers
+  const errorClass = 'border-red-400 ring-2 ring-red-100';
+  const normalInputClass = 'border-zinc-200';
+  const normalSelectClass = 'border-zinc-200';
+
+  function showStepError(step: number, msg: string) {
+    const el = document.getElementById(`step-${step}-error`);
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+  }
+
+  function hideStepError(step: number) {
+    const el = document.getElementById(`step-${step}-error`);
+    if (el) { el.textContent = ''; el.classList.add('hidden'); }
+  }
+
+  function markInvalid(el: HTMLElement) {
+    el.classList.remove(normalInputClass, normalSelectClass);
+    errorClass.split(' ').forEach(c => el.classList.add(c));
+  }
+
+  function clearInvalid(el: HTMLElement) {
+    errorClass.split(' ').forEach(c => el.classList.remove(c));
+    if (el.tagName === 'SELECT') el.classList.add(normalSelectClass);
+    else el.classList.add(normalInputClass);
+  }
+
+  // Clear error styling on input
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input', () => clearInvalid(el as HTMLElement));
+    el.addEventListener('change', () => clearInvalid(el as HTMLElement));
+  });
+
+  function validateStep1(): boolean {
+    hideStepError(1);
+    const selected = document.querySelectorAll('[data-service-card].border-\\[\\#00C4CC\\]');
+    if (selected.length === 0) {
+      showStepError(1, 'Please select at least one service.');
+      return false;
+    }
+    return true;
+  }
+
+  function validateStep2(): boolean {
+    hideStepError(2);
+    let valid = true;
+    const address = document.getElementById('field-address') as HTMLInputElement;
+    const homeSize = document.getElementById('field-homeSize') as HTMLSelectElement;
+
+    if (!address.value.trim()) { markInvalid(address); valid = false; }
+    if (!homeSize.value) { markInvalid(homeSize); valid = false; }
+
+    if (!valid) showStepError(2, 'Please fill in the required fields.');
+    return valid;
+  }
+
+  function validateStep3(): boolean {
+    hideStepError(3);
+    if (selectedDay === null) {
+      showStepError(3, 'Please select a preferred date.');
+      return false;
+    }
+    return true;
+  }
+
+  function validateStep4(): boolean {
+    let valid = true;
+    const fields = [
+      document.getElementById('field-firstName') as HTMLInputElement,
+      document.getElementById('field-lastName') as HTMLInputElement,
+      document.getElementById('field-phone') as HTMLInputElement,
+      document.getElementById('field-email') as HTMLInputElement,
+    ];
+    fields.forEach(f => {
+      if (!f.value.trim()) { markInvalid(f); valid = false; }
+    });
+    return valid;
+  }
+
+  // Step navigation buttons (with validation on forward steps)
+  document.getElementById('btn-next-2')?.addEventListener('click', () => { if (validateStep1()) goToStep(2); });
+  document.getElementById('btn-next-3')?.addEventListener('click', () => { if (validateStep2()) goToStep(3); });
+  document.getElementById('btn-next-4')?.addEventListener('click', () => { if (validateStep3()) goToStep(4); });
+  document.getElementById('btn-prev-1')?.addEventListener('click', () => goToStep(1));
+  document.getElementById('btn-prev-2')?.addEventListener('click', () => goToStep(2));
+  document.getElementById('btn-prev-3')?.addEventListener('click', () => goToStep(3));
+
+  // Initialize calendar on load
+  initCalendar();
+
+  // Form Submission
+  document.getElementById('btn-submit')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-submit') as HTMLButtonElement;
+    const errorEl = document.getElementById('submit-error') as HTMLElement;
+
+    // Hide previous error
+    errorEl.classList.add('hidden');
+
+    // Validate Step 4 fields
+    if (!validateStep4()) {
+      errorEl.textContent = 'Please fill in all required fields.';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+
+    // Collect form values
+    const firstName = (document.getElementById('field-firstName') as HTMLInputElement)?.value || '';
+    const lastName = (document.getElementById('field-lastName') as HTMLInputElement)?.value || '';
+    const phone = (document.getElementById('field-phone') as HTMLInputElement)?.value || '';
+    const email = (document.getElementById('field-email') as HTMLInputElement)?.value || '';
+    const hearAboutUs = (document.getElementById('field-hearAboutUs') as HTMLSelectElement)?.value || '';
+    const serviceAddress = (document.getElementById('field-address') as HTMLInputElement)?.value || '';
+    const homeSize = (document.getElementById('field-homeSize') as HTMLSelectElement)?.value || '';
+    const additionalNotes = (document.getElementById('field-notes') as HTMLTextAreaElement)?.value || '';
+
+    // Selected services
+    const selectedCards = document.querySelectorAll('[data-service-card].border-\\[\\#00C4CC\\]');
+    const serviceType = Array.from(selectedCards)
+      .map(card => {
+        const titleEl = card.querySelector('.text-sm.font-medium.text-zinc-900');
+        return titleEl?.textContent?.trim() || '';
+      })
+      .filter(Boolean)
+      .join(', ');
+
+    // Preferred date from calendar state
+    let preferredDate = '';
+    if (selectedDay !== null) {
+      const m = String(calMonth + 1).padStart(2, '0');
+      const d = String(selectedDay).padStart(2, '0');
+      preferredDate = `${calYear}-${m}-${d}`;
+    }
+
+    // Selected time pill
+    const selectedTimePill = document.querySelector('[data-time-pill].border-\\[\\#00C4CC\\]');
+    const preferredTime = selectedTimePill?.textContent?.trim() || '';
+
+    // Disable button + show sending state
+    btn.disabled = true;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = 'Sending...';
+    btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+    const payload = {
+      firstName,
+      lastName,
+      phone,
+      email,
+      hearAboutUs,
+      serviceType,
+      serviceAddress,
+      homeSize,
+      additionalNotes,
+      preferredDate,
+      preferredTime,
+    };
+
+    try {
+      const webhookUrl = btn.dataset.webhook || '';
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      window.location.href = '/thank-you';
+    } catch {
+      errorEl.textContent = 'Something went wrong. Please try again.';
+      errorEl.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+      btn.classList.remove('opacity-70', 'cursor-not-allowed');
+    }
+  });
+</script>

@@ -1,0 +1,67 @@
+---
+/**
+ * CTA Banner — ctaBannerComponent
+ * Dark or light call-to-action banner with centered text and button
+ */
+
+import type { CtaBannerComponentFields } from '@/lib/contentful';
+
+export interface Props {
+  fields: CtaBannerComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const isDark = fields.backgroundColor === 'dark';
+---
+
+{isDark ? (
+  <section class="py-24 px-6 relative">
+    <div class="max-w-5xl mx-auto bg-[#0D2626] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+      {/* Glow inside card */}
+      <div class="absolute inset-0 bg-[#00C4CC]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
+
+      <h2 class="text-4xl font-medium tracking-tighter text-white mb-4 relative z-10">
+        {fields.title}
+      </h2>
+
+      {fields.description && (
+        <p class="text-zinc-400 text-lg mb-10 max-w-lg mx-auto font-light relative z-10">
+          {fields.description}
+        </p>
+      )}
+
+      {fields.ctaText && (
+        <a
+          href={fields.ctaLink || '#contact'}
+          class="inline-flex items-center justify-center gap-2 bg-[#00C4CC] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all relative z-10 shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)]"
+        >
+          {fields.ctaText}
+        </a>
+      )}
+    </div>
+  </section>
+) : (
+  <section class="py-24 px-6 relative">
+    <div class="max-w-5xl mx-auto rounded-[3rem] p-12 md:p-20 text-center bg-[#F0FAFA] ring-1 ring-[#00C4CC]/10">
+      <h2 class="text-4xl font-medium tracking-tighter text-zinc-900 mb-4">
+        {fields.title}
+      </h2>
+
+      {fields.description && (
+        <p class="text-zinc-500 text-lg mb-10 max-w-lg mx-auto font-light">
+          {fields.description}
+        </p>
+      )}
+
+      {fields.ctaText && (
+        <a
+          href={fields.ctaLink || '#contact'}
+          class="inline-flex items-center justify-center gap-2 bg-[#00C4CC] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all shadow-sm"
+        >
+          {fields.ctaText}
+        </a>
+      )}
+    </div>
+  </section>
+)}

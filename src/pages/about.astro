@@ -1,0 +1,241 @@
+---
+/**
+ * About Page — /about
+ * Fetches the "about" page from Contentful and renders with custom layout:
+ * - Page hero with breadcrumb and mesh gradient
+ * - Story card (contentWithImageComponent)
+ * - Values row (benefitsGridComponent #1)
+ * - Credentials grid (benefitsGridComponent #2)
+ * - Contact info cards (contactInfoComponent)
+ * - Two-button CTA banner (ctaBannerComponent)
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navigation from '@/components/global/Navigation.astro';
+import SiteFooter from '@/components/global/SiteFooter.astro';
+import ContactInfo from '@/components/sections/ContactInfo.astro';
+import { getPageData, getAssetUrl } from '@/lib/contentful';
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import type { ContentWithImageComponentFields, BenefitsGridComponentFields, CtaBannerComponentFields, ContactInfoComponentFields } from '@/lib/contentful';
+
+const page = await getPageData('about');
+
+const seoTitle = page?.seo?.metaTitle || "About Us — Karen's Cleaning";
+const seoDescription = page?.seo?.metaDescription || "Learn about Karen's Cleaning — a local, trusted cleaning team serving Ocean County, NJ.";
+const seoImage = page?.seo?.ogImage ? getAssetUrl(page.seo.ogImage) : undefined;
+
+// Separate components by type for custom layout
+const storyCard = page?.components.find(c => c.contentType === 'contentWithImageComponent');
+const benefitsGrids = page?.components.filter(c => c.contentType === 'benefitsGridComponent') || [];
+const valuesGrid = benefitsGrids[0] as { contentType: 'benefitsGridComponent'; fields: BenefitsGridComponentFields } | undefined;
+const credentialsGrid = benefitsGrids[1] as { contentType: 'benefitsGridComponent'; fields: BenefitsGridComponentFields } | undefined;
+const contactInfo = page?.components.find(c => c.contentType === 'contactInfoComponent') as { contentType: 'contactInfoComponent'; fields: ContactInfoComponentFields } | undefined;
+const ctaBanner = page?.components.find(c => c.contentType === 'ctaBannerComponent') as { contentType: 'ctaBannerComponent'; fields: CtaBannerComponentFields } | undefined;
+
+// Render story card rich text
+let storyHtml = '';
+if (storyCard?.contentType === 'contentWithImageComponent') {
+  const fields = storyCard.fields as ContentWithImageComponentFields;
+  if (fields.content) {
+    try {
+      storyHtml = documentToHtmlString(fields.content);
+    } catch {
+      storyHtml = '';
+    }
+  }
+}
+
+// Icon maps for values and credentials
+const valueIcons: Record<string, string> = {
+  'integrity': 'solar:crown-linear',
+  'transparency': 'solar:eye-linear',
+  'thoroughness': 'solar:stars-linear',
+  'trust': 'solar:handshake-linear',
+  'respect': 'solar:heart-linear',
+  'consistency': 'solar:refresh-circle-linear',
+};
+const defaultValueIcons = ['solar:crown-linear', 'solar:stars-linear', 'solar:handshake-linear'];
+
+const credentialIcons: Record<string, string> = {
+  'fully insured': 'solar:shield-check-linear',
+  'background checked': 'solar:check-circle-linear',
+  'satisfaction guaranteed': 'solar:medal-ribbon-star-linear',
+  'locally based': 'solar:home-2-linear',
+  'easy to reach': 'solar:smartphone-linear',
+  'always on time': 'solar:clock-circle-linear',
+  'consistent team': 'solar:users-group-rounded-linear',
+  'eco-friendly': 'solar:leaf-linear',
+};
+const defaultCredentialIcons = ['solar:shield-check-linear', 'solar:check-circle-linear', 'solar:medal-ribbon-star-linear', 'solar:home-2-linear', 'solar:smartphone-linear', 'solar:clock-circle-linear'];
+
+// Extract phone for CTA secondary button
+const phone = contactInfo?.fields?.phone || '';
+const phoneDigits = phone.replace(/\D/g, '');
+
+// Fallback image for story card
+const storyImage = storyCard?.contentType === 'contentWithImageComponent'
+  ? getAssetUrl((storyCard.fields as ContentWithImageComponentFields).image)
+  : null;
+const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop';
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  image={seoImage || undefined}
+>
+  <Navigation currentPath="/about" />
+
+  {/* Page Hero */}
+  <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
+    <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#00C4CC]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
+      <span class="text-zinc-400">Home</span>
+      <iconify-icon icon="solar:alt-arrow-right-linear" class="text-zinc-300"></iconify-icon>
+      <span class="text-zinc-900">About</span>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-medium tracking-tighter text-zinc-900 mb-6 max-w-3xl">
+      {page?.title || "About Karen's"}
+    </h1>
+    <p class="text-lg md:text-xl text-zinc-500 font-light max-w-2xl leading-relaxed">
+      Real people. Real care. A real difference in how you experience your home.
+    </p>
+  </section>
+
+  {/* Content Container */}
+  <div class="max-w-7xl mx-auto px-6 space-y-8 pb-32">
+
+    {/* Story Card */}
+    {storyCard && storyCard.contentType === 'contentWithImageComponent' && (
+      <section class="bg-white rounded-[2.5rem] p-8 md:p-12 lg:p-16 ring-1 ring-zinc-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col lg:flex-row gap-12 lg:gap-20 items-center overflow-hidden relative group">
+        <div class="w-full lg:w-1/2 relative z-10">
+          <span class="bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#B8942A] text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6">
+            Our Story
+          </span>
+          {(storyCard.fields as ContentWithImageComponentFields).title && (
+            <h2 class="text-4xl font-medium tracking-tighter text-zinc-900 mb-6">
+              {(storyCard.fields as ContentWithImageComponentFields).title}
+            </h2>
+          )}
+          {storyHtml && (
+            <div class="space-y-6 text-base leading-relaxed text-zinc-500 font-light" set:html={storyHtml} />
+          )}
+        </div>
+        <div class="w-full lg:w-1/2 relative z-10">
+          <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden ring-1 ring-zinc-200/50 shadow-2xl bg-zinc-100">
+            <img
+              src={storyImageSrc}
+              alt={(storyCard.fields as ContentWithImageComponentFields).title || 'About us'}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* Values Row */}
+    {valuesGrid && (
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
+        {(valuesGrid.fields.benefits || []).filter((b: any) => b?.fields).map((benefit: any, i: number) => {
+          const icon = valueIcons[benefit.fields.title?.toLowerCase()] || defaultValueIcons[i % defaultValueIcons.length];
+          return (
+            <div class="bg-white rounded-3xl p-10 ring-1 ring-zinc-200/60 shadow-sm relative overflow-hidden group">
+              <div class="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#00C4CC]/5 transition-all duration-500">
+                <iconify-icon icon={icon} class="text-2xl text-[#00C4CC]"></iconify-icon>
+              </div>
+              <h3 class="text-xl font-medium text-zinc-900 mb-3 tracking-tighter">{benefit.fields.title}</h3>
+              <p class="text-sm font-light text-zinc-500 leading-relaxed">{benefit.fields.description}</p>
+            </div>
+          );
+        })}
+      </section>
+    )}
+
+    {/* Credentials Grid */}
+    {credentialsGrid && (
+      <section class="pt-24 pb-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-medium tracking-tighter text-zinc-900 mb-4">{credentialsGrid.fields.sectionTitle}</h2>
+          {credentialsGrid.fields.description && (
+            <p class="text-zinc-500 font-light max-w-xl mx-auto">{credentialsGrid.fields.description}</p>
+          )}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(credentialsGrid.fields.benefits || []).filter((b: any) => b?.fields).map((benefit: any, i: number) => {
+            const icon = credentialIcons[benefit.fields.title?.toLowerCase()] || defaultCredentialIcons[i % defaultCredentialIcons.length];
+            return (
+              <div class="bg-white rounded-2xl p-6 ring-1 ring-zinc-200/60 shadow-sm flex gap-4 items-start hover:ring-zinc-300 transition-shadow cursor-default">
+                <div class="w-10 h-10 rounded-full bg-[#00C4CC]/10 border border-[#00C4CC]/20 flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon={icon} class="text-[#00C4CC] text-lg"></iconify-icon>
+                </div>
+                <div>
+                  <h3 class="text-sm font-medium text-zinc-900 mb-1">{benefit.fields.title}</h3>
+                  <p class="text-sm text-zinc-500 font-light">{benefit.fields.description}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    {/* Contact Snapshot */}
+    {contactInfo && (
+      <ContactInfo fields={contactInfo.fields} />
+    )}
+
+  </div>
+
+  {/* Bottom CTA — outside container, two buttons */}
+  {ctaBanner && (
+    <section class="pb-24 px-6 relative">
+      <div class="max-w-5xl mx-auto bg-[#0D2626] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+        <div class="absolute inset-0 bg-[#00C4CC]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
+        <div class="absolute top-0 right-0 bg-[#D4AF37]/5 blur-[80px] w-[300px] h-[300px] rounded-full mix-blend-screen pointer-events-none"></div>
+
+        <h2 class="text-4xl font-medium tracking-tighter text-white mb-4 relative z-10">
+          {ctaBanner.fields.title}
+        </h2>
+        {ctaBanner.fields.description && (
+          <p class="text-zinc-400 text-lg mb-10 max-w-lg mx-auto font-light relative z-10">
+            {ctaBanner.fields.description}
+          </p>
+        )}
+
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+          {ctaBanner.fields.ctaText && (
+            <a
+              href={ctaBanner.fields.ctaLink || '#contact'}
+              class="inline-flex items-center justify-center gap-2 bg-[#00C4CC] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] w-full sm:w-auto"
+            >
+              {ctaBanner.fields.ctaText}
+            </a>
+          )}
+          {phone && (
+            <a
+              href={`tel:${phoneDigits}`}
+              class="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-8 py-3.5 rounded-full text-base font-medium hover:bg-white/10 transition-all w-full sm:w-auto"
+            >
+              Call {phone}
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .bg-mesh {
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+</style>

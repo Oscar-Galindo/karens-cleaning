@@ -1,9 +1,9 @@
 import { createClient } from 'contentful';
 
 const client = createClient({
-  space: 'sm8otodtkz58',
-  accessToken: 'cMj9I6sZK52795pLZ9EiQKqTepPNQGYtRDh6zH9Sh3E',
-  environment: 'master',
+  space: process.env.CONTENTFUL_SPACE_ID,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
 });
 
 const entries = await client.getEntries({

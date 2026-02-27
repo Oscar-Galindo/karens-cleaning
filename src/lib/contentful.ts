@@ -427,8 +427,8 @@ export function getRichTextPlainText(richText: any): string {
 // ============================================================================
 
 export interface SeoMetadataFields {
-  title: string;
-  description: string;
+  metaTitle: string;
+  metaDescription: string;
   ogImage?: Asset;
 }
 
@@ -488,11 +488,11 @@ export interface TestimonialComponentFields {
 
 export interface ContentWithImageComponentFields {
   title?: string;
-  body?: any; // Rich Text
+  content?: any; // Rich Text
   image?: Asset;
   imagePosition?: 'left' | 'right';
   ctaText?: string;
-  ctaUrl?: string;
+  ctaLink?: string;
 }
 
 export interface FaqItemFields {
@@ -505,6 +505,134 @@ export interface FaqComponentFields {
   faqs: any[]; // Resolved linked entries
 }
 
+export interface CtaBannerComponentFields {
+  title: string;
+  description?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  backgroundColor?: string;
+}
+
+export interface ContactInfoComponentFields {
+  phone?: string;
+  email?: string;
+  hours?: string;
+}
+
+export interface TrustBadgesComponentFields {
+  badges: any[]; // Resolved linked entries with fields: { text: string }
+}
+
+// ============================================================================
+// SITE SETTINGS — Single source of truth for global header/footer data
+// ============================================================================
+
+export interface NavItemFields {
+  label: string;
+  link: string;
+  openInNewTab?: boolean;
+}
+
+export interface SocialLinkFields {
+  platform: string;
+  url: string;
+}
+
+export interface FooterData {
+  companyName: string;
+  tagline?: string;
+  aboutMenuItems: NavItemFields[];
+  getStartedItems: NavItemFields[];
+  socialLinks: SocialLinkFields[];
+  copyrightText: string;
+  legalLinks: NavItemFields[];
+}
+
+export interface SiteSettings {
+  companyName: string;
+  logoText: string;
+  logoUrl: string | null; // Resolved image asset URL, or null
+  ctaButtonText: string;
+  ctaButtonLink: string;
+  navItems: NavItemFields[];
+  footer: FooterData;
+}
+
+/**
+ * Get Site Settings — fetches the main-site-settings entry by ID
+ * Single source of truth for header nav, footer, logo, and CTA
+ */
+export async function getSiteSettings(): Promise<SiteSettings | null> {
+  if (!client) return null;
+  try {
+    const entry = await client.getEntry('main-site-settings', { include: 3 });
+    const f = entry.fields as any;
+
+    // Logo
+    let logoUrl: string | null = null;
+    if (f.logo?.fields?.file?.url) {
+      const url = f.logo.fields.file.url;
+      logoUrl = typeof url === 'string' ? (url.startsWith('//') ? `https:${url}` : url) : null;
+    }
+
+    // Header nav items
+    const navItems: NavItemFields[] = (f.headerNavigation?.fields?.items || [])
+      .filter((item: any) => item?.fields)
+      .map((item: any) => ({
+        label: item.fields.label,
+        link: item.fields.link,
+        openInNewTab: item.fields.openInNewTab || false,
+      }));
+
+    // Footer
+    const ft = f.footer?.fields;
+    const footer: FooterData = {
+      companyName: ft?.companyName || f.companyName || "Karen's",
+      tagline: ft?.tagline,
+      aboutMenuItems: (ft?.aboutMenu?.fields?.items || [])
+        .filter((item: any) => item?.fields)
+        .map((item: any) => ({
+          label: item.fields.label,
+          link: item.fields.link,
+          openInNewTab: item.fields.openInNewTab || false,
+        })),
+      getStartedItems: (ft?.customerPortalMenu?.fields?.items || [])
+        .filter((item: any) => item?.fields)
+        .map((item: any) => ({
+          label: item.fields.label,
+          link: item.fields.link,
+          openInNewTab: item.fields.openInNewTab || false,
+        })),
+      socialLinks: (ft?.socialLinks || [])
+        .filter((s: any) => s?.fields)
+        .map((s: any) => ({
+          platform: s.fields.platform,
+          url: s.fields.url,
+        })),
+      copyrightText: ft?.copyrightText || `© ${new Date().getFullYear()} Karen's Cleaning Services. All rights reserved.`,
+      legalLinks: (ft?.legalLinks || [])
+        .filter((item: any) => item?.fields)
+        .map((item: any) => ({
+          label: item.fields.label,
+          link: item.fields.link,
+        })),
+    };
+
+    return {
+      companyName: f.companyName || "Karen's",
+      logoText: f.logoText || "Karen's",
+      logoUrl,
+      ctaButtonText: f.ctaButtonText || 'Get Your Estimate',
+      ctaButtonLink: f.ctaButtonLink || '/book',
+      navItems,
+      footer,
+    };
+  } catch (error: any) {
+    console.error('Error fetching site settings:', error.message);
+    return null;
+  }
+}
+
 export type PageComponent =
   | { contentType: 'heroComponent'; fields: HeroComponentFields }
   | { contentType: 'benefitsGridComponent'; fields: BenefitsGridComponentFields }
@@ -512,7 +640,10 @@ export type PageComponent =
   | { contentType: 'serviceCardsComponent'; fields: ServiceCardsComponentFields }
   | { contentType: 'testimonialComponent'; fields: TestimonialComponentFields }
   | { contentType: 'contentWithImageComponent'; fields: ContentWithImageComponentFields }
-  | { contentType: 'faqComponent'; fields: FaqComponentFields };
+  | { contentType: 'faqComponent'; fields: FaqComponentFields }
+  | { contentType: 'ctaBannerComponent'; fields: CtaBannerComponentFields }
+  | { contentType: 'contactInfoComponent'; fields: ContactInfoComponentFields }
+  | { contentType: 'trustBadgesComponent'; fields: TrustBadgesComponentFields };
 
 export interface HomePageData {
   title: string;
@@ -546,8 +677,8 @@ export async function getHomePageData(): Promise<HomePageData | null> {
     let seo: SeoMetadataFields | undefined;
     if (fields.seo?.fields) {
       seo = {
-        title: fields.seo.fields.title || '',
-        description: fields.seo.fields.description || '',
+        metaTitle: fields.seo.fields.metaTitle || '',
+        metaDescription: fields.seo.fields.metaDescription || '',
         ogImage: fields.seo.fields.ogImage,
       };
     }
@@ -572,6 +703,57 @@ export async function getHomePageData(): Promise<HomePageData | null> {
     };
   } catch (error: any) {
     console.error('Error fetching home page:', error.message);
+    return null;
+  }
+}
+
+/**
+ * Get Page Data — fetches any page by slug and transforms components
+ */
+export async function getPageData(slug: string): Promise<HomePageData | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'page',
+      'fields.slug': slug,
+      include: 3,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) {
+      console.error(`No page found with slug "${slug}"`);
+      return null;
+    }
+
+    const entry = entries.items[0];
+    const fields = entry.fields as any;
+
+    let seo: SeoMetadataFields | undefined;
+    if (fields.seo?.fields) {
+      seo = {
+        metaTitle: fields.seo.fields.metaTitle || '',
+        metaDescription: fields.seo.fields.metaDescription || '',
+        ogImage: fields.seo.fields.ogImage,
+      };
+    }
+
+    const components: PageComponent[] = [];
+    const rawComponents = fields.components || [];
+
+    for (const comp of rawComponents) {
+      if (!comp?.sys?.contentType?.sys?.id || !comp?.fields) continue;
+      const ct = comp.sys.contentType.sys.id as string;
+      components.push({ contentType: ct, fields: comp.fields } as PageComponent);
+    }
+
+    return {
+      title: fields.title || slug,
+      slug: fields.slug || slug,
+      seo,
+      components,
+    };
+  } catch (error: any) {
+    console.error(`Error fetching page "${slug}":`, error.message);
     return null;
   }
 }

@@ -13,6 +13,8 @@ import ServiceCards from '@/components/sections/ServiceCards.astro';
 import Testimonial from '@/components/sections/Testimonial.astro';
 import ContentWithImage from '@/components/sections/ContentWithImage.astro';
 import FaqAccordion from '@/components/sections/FaqAccordion.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import ContactInfo from '@/components/sections/ContactInfo.astro';
 
 export interface Props {
   component: PageComponent;
@@ -30,3 +32,5 @@ const ct = component.contentType;
 {ct === 'testimonialComponent' && <Testimonial fields={component.fields} />}
 {ct === 'contentWithImageComponent' && <ContentWithImage fields={component.fields} />}
 {ct === 'faqComponent' && <FaqAccordion fields={component.fields} />}
+{ct === 'ctaBannerComponent' && <CtaBanner fields={component.fields} />}
+{ct === 'contactInfoComponent' && <ContactInfo fields={component.fields} />}

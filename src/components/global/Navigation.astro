@@ -1,10 +1,11 @@
 ---
 /**
  * Navigation — Karen's Cleaning
- * Sticky header: teal "Karen's" logo, centered links, dark CTA pill button
+ * Sticky header: logo (image or text), centered links, dark CTA pill button
+ * All data from Site Settings (single source of truth)
  */
 
-import { getSiteNavigation, getAssetUrl } from '@/lib/contentful';
+import { getSiteSettings } from '@/lib/contentful';
 
 export interface Props {
   currentPath?: string;
@@ -12,23 +13,21 @@ export interface Props {
 
 const { currentPath = '' } = Astro.props;
 
-const nav = await getSiteNavigation();
+const settings = await getSiteSettings();
 
-const defaultNav = {
-  menuItems: [
-    { label: 'Home', url: '/' },
-    { label: 'Our Services', url: '#services' },
-    { label: 'About', url: '#about' },
-  ],
-  ctaButton: {
-    text: 'Get Your Estimate',
-    url: import.meta.env.BOOKING_URL || '#contact',
-    external: false,
-  },
-};
+const menuItems = settings?.navItems.length
+  ? settings.navItems
+  : [
+      { label: 'Home', link: '/', openInNewTab: false },
+      { label: 'Our Services', link: '/services', openInNewTab: false },
+      { label: 'About', link: '/about', openInNewTab: false },
+    ];
 
-const menuItems = nav?.menuItems || defaultNav.menuItems;
-const ctaButton = nav?.ctaButton || defaultNav.ctaButton;
+const logoText = settings?.logoText || "Karen's";
+const logoUrl = settings?.logoUrl || null;
+const companyName = settings?.companyName || "Karen's";
+const ctaText = settings?.ctaButtonText || 'Get Your Estimate';
+const ctaLink = settings?.ctaButtonLink || '/book';
 
 function isActive(url: string): boolean {
   if (url.startsWith('#')) return false;
@@ -42,17 +41,23 @@ function isActive(url: string): boolean {
 
     <!-- Logo -->
     <a href="/" class="flex items-center text-[#00C4CC]">
-      <span class="text-4xl font-medium tracking-tight">Karen's</span>
+      {logoUrl ? (
+        <img src={logoUrl} alt={companyName} class="h-10 w-auto" />
+      ) : (
+        <span class="text-4xl font-medium tracking-tight">{logoText}</span>
+      )}
     </a>
 
     <!-- Desktop Nav -->
     <nav class="hidden md:flex items-center gap-10">
       {menuItems.map((item) => (
         <a
-          href={item.url}
+          href={item.link}
+          target={item.openInNewTab ? '_blank' : undefined}
+          rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
           class:list={[
             'text-lg font-normal transition-colors',
-            isActive(item.url) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
+            isActive(item.link) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
           ]}
         >
           {item.label}
@@ -63,12 +68,10 @@ function isActive(url: string): boolean {
     <!-- CTA -->
     <div class="hidden md:flex items-center">
       <a
-        href={ctaButton.url}
-        target={ctaButton.external ? '_blank' : undefined}
-        rel={ctaButton.external ? 'noopener noreferrer' : undefined}
+        href={ctaLink}
         class="bg-[#1A1A1A] text-[#FAFFFE] px-6 py-3 rounded-full text-lg font-normal hover:bg-[#333333] transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
       >
-        {ctaButton.text}
+        {ctaText}
       </a>
     </div>
 
@@ -93,10 +96,10 @@ function isActive(url: string): boolean {
     <div class="flex flex-col space-y-5 pt-6 pb-6">
       {menuItems.map((item) => (
         <a
-          href={item.url}
+          href={item.link}
           class:list={[
             'text-xl font-normal transition-colors',
-            isActive(item.url) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
+            isActive(item.link) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
           ]}
         >
           {item.label}
@@ -105,10 +108,10 @@ function isActive(url: string): boolean {
     </div>
     <div class="pb-6">
       <a
-        href={ctaButton.url}
+        href={ctaLink}
         class="block text-center bg-[#1A1A1A] text-[#FAFFFE] px-4 py-4 rounded-full text-xl font-normal tracking-tight hover:bg-[#333333] transition-all shadow-md"
       >
-        {ctaButton.text}
+        {ctaText}
       </a>
     </div>
   </div>

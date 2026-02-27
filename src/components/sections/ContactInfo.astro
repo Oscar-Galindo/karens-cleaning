@@ -1,0 +1,42 @@
+---
+/**
+ * Contact Info — contactInfoComponent
+ * 3-column cards: phone, email, hours
+ */
+
+import type { ContactInfoComponentFields } from '@/lib/contentful';
+
+export interface Props {
+  fields: ContactInfoComponentFields;
+}
+
+const { fields } = Astro.props;
+
+const phoneDigits = fields.phone?.replace(/\D/g, '') || '';
+---
+
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 pb-12">
+  {fields.phone && (
+    <div class="bg-zinc-50 rounded-3xl p-8 ring-1 ring-zinc-200/50 text-center flex flex-col items-center justify-center">
+      <iconify-icon icon="solar:phone-calling-linear" class="text-3xl text-zinc-400 mb-4"></iconify-icon>
+      <div class="text-xl font-medium tracking-tighter text-zinc-900 mb-1">{fields.phone}</div>
+      <div class="text-sm text-zinc-500 font-light">Call or Text</div>
+    </div>
+  )}
+
+  {fields.email && (
+    <div class="bg-zinc-50 rounded-3xl p-8 ring-1 ring-zinc-200/50 text-center flex flex-col items-center justify-center">
+      <iconify-icon icon="solar:letter-linear" class="text-3xl text-zinc-400 mb-4"></iconify-icon>
+      <div class="text-lg md:text-xl font-medium tracking-tighter text-zinc-900 mb-1 truncate w-full">{fields.email}</div>
+      <div class="text-sm text-zinc-500 font-light">Email Us</div>
+    </div>
+  )}
+
+  {fields.hours && (
+    <div class="bg-zinc-50 rounded-3xl p-8 ring-1 ring-zinc-200/50 text-center flex flex-col items-center justify-center">
+      <iconify-icon icon="solar:calendar-mark-linear" class="text-3xl text-zinc-400 mb-4"></iconify-icon>
+      <div class="text-xl font-medium tracking-tighter text-zinc-900 mb-1">{fields.hours}</div>
+      <div class="text-sm text-zinc-500 font-light">Business Hours</div>
+    </div>
+  )}
+</section>

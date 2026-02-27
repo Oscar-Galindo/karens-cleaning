@@ -1,0 +1,90 @@
+---
+/**
+ * Services Page — /services
+ * Fetches the "services" page from Contentful and renders with custom layout:
+ * - Page hero with breadcrumb and mesh gradient
+ * - ServiceDetailCard for contentWithImageComponent entries
+ * - FaqAccordion for faqComponent
+ * - CtaBanner for ctaBannerComponent
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navigation from '@/components/global/Navigation.astro';
+import SiteFooter from '@/components/global/SiteFooter.astro';
+import ServiceDetailCard from '@/components/sections/ServiceDetailCard.astro';
+import FaqAccordion from '@/components/sections/FaqAccordion.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import { getPageData, getAssetUrl } from '@/lib/contentful';
+
+const page = await getPageData('services');
+
+const seoTitle = page?.seo?.metaTitle || "Our Services — Karen's Cleaning";
+const seoDescription = page?.seo?.metaDescription || "Professional house cleaning, post-construction cleanup, and move-in/move-out services. See what Karen's Cleaning can do for you.";
+const seoImage = page?.seo?.ogImage ? getAssetUrl(page.seo.ogImage) : undefined;
+
+// Track index for contentWithImage cards (for badge cycling)
+let serviceCardIndex = 0;
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  image={seoImage || undefined}
+>
+  <Navigation currentPath="/services" />
+
+  {/* Page Hero */}
+  <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
+    {/* Modern Glow & Grid Background */}
+    <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#00C4CC]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+    {/* Breadcrumb pill */}
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
+      <span class="text-zinc-400">Home</span>
+      <iconify-icon icon="solar:alt-arrow-right-linear" class="text-zinc-300"></iconify-icon>
+      <span class="text-zinc-900">Services</span>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-medium tracking-tighter text-zinc-900 mb-6 max-w-3xl">
+      {page?.title || 'Our Services'}
+    </h1>
+    <p class="text-lg md:text-xl text-zinc-500 font-light max-w-2xl leading-relaxed">
+      Every clean is personal. Every home deserves our absolute best. Discover the right plan for your space.
+    </p>
+  </section>
+
+  {/* Components */}
+  {page && page.components.length > 0 ? (
+    <div class="max-w-7xl mx-auto px-6 space-y-8 pb-32">
+      {page.components.map((component) => {
+        if (component.contentType === 'contentWithImageComponent') {
+          const idx = serviceCardIndex++;
+          return <ServiceDetailCard fields={component.fields} index={idx} />;
+        }
+        if (component.contentType === 'faqComponent') {
+          return <FaqAccordion fields={component.fields} />;
+        }
+        if (component.contentType === 'ctaBannerComponent') {
+          return <CtaBanner fields={component.fields} />;
+        }
+        return null;
+      })}
+    </div>
+  ) : (
+    <div class="max-w-4xl mx-auto px-6 py-24 text-center">
+      <p class="text-xl text-zinc-500">Services content is being loaded from our CMS. Check back soon.</p>
+    </div>
+  )}
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  /* Mesh dot pattern background */
+  .bg-mesh {
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+</style>

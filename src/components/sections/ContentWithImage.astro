@@ -20,9 +20,9 @@ const image = imageUrl ? CloudinaryPresets.hero(imageUrl, 800) : null;
 const isImageLeft = fields.imagePosition !== 'right';
 
 let bodyHtml = '';
-if (fields.body) {
+if (fields.content) {
   try {
-    bodyHtml = documentToHtmlString(fields.body);
+    bodyHtml = documentToHtmlString(fields.content);
   } catch {
     bodyHtml = '';
   }
@@ -63,7 +63,7 @@ if (fields.body) {
       {fields.ctaText && (
         <div class="mt-10">
           <a
-            href={fields.ctaUrl || '#contact'}
+            href={fields.ctaLink || '#contact'}
             class="inline-block bg-[#1A1A1A] text-[#FAFFFE] px-10 py-5 rounded-full text-xl font-normal hover:bg-[#333333] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             {fields.ctaText}

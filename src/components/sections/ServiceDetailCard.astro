@@ -1,0 +1,196 @@
+---
+/**
+ * Service Detail Card — Large rounded card for individual service
+ * Used on /services page. Alternating image positions, colored badges, rich text.
+ */
+
+import type { ContentWithImageComponentFields } from '@/lib/contentful';
+import { getAssetUrl } from '@/lib/contentful';
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import { BLOCKS } from '@contentful/rich-text-types';
+
+export interface Props {
+  fields: ContentWithImageComponentFields;
+  index: number;
+}
+
+const { fields, index } = Astro.props;
+
+const imageUrl = getAssetUrl(fields.image);
+
+// Fallback images when none uploaded to Contentful
+const fallbackImages = [
+  'https://images.unsplash.com/photo-1527030280862-64139fba04ca?q=80&w=2070&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2071&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop',
+];
+
+const image = imageUrl || fallbackImages[index % fallbackImages.length];
+const isImageRight = fields.imagePosition === 'right';
+
+// Badge config per index
+const badges = [
+  { label: 'Most Popular', bg: 'bg-[#00C4CC]/10', border: 'border-[#00C4CC]/20', text: 'text-[#00AAB0]', iconColor: '#00C4CC' },
+  { label: 'Specialized Service', bg: 'bg-[#D4AF37]/10', border: 'border-[#D4AF37]/20', text: 'text-[#B8942A]', iconColor: '#D4AF37' },
+  { label: 'Perfect for Transitions', bg: 'bg-zinc-100', border: 'border-zinc-200', text: 'text-zinc-600', iconColor: '#a1a1aa' },
+];
+const badge = badges[index % badges.length];
+
+// CTA style: first card gets dark, others get outlined
+const isFirstCard = index === 0;
+
+// Render rich text — split paragraphs and lists
+let contentHtml = '';
+if (fields.content) {
+  try {
+    contentHtml = documentToHtmlString(fields.content, {
+      renderNode: {
+        [BLOCKS.UL_LIST]: (_node: any, next: any) =>
+          `<ul class="service-checklist">${next(_node.content)}</ul>`,
+        [BLOCKS.LIST_ITEM]: (_node: any, next: any) =>
+          `<li>${next(_node.content)}</li>`,
+      },
+    });
+  } catch {
+    contentHtml = '';
+  }
+}
+---
+
+<section class:list={[
+  'bg-white rounded-[2.5rem] p-8 md:p-12 lg:p-16 ring-1 ring-zinc-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] items-center overflow-hidden relative group',
+  isImageRight ? 'flex flex-col lg:flex-row gap-12 lg:gap-20' : 'flex flex-col-reverse lg:flex-row gap-12 lg:gap-20',
+]}>
+
+  {/* Text — always first in DOM for imageRight, second for imageLeft */}
+  {isImageRight && (
+    <div class="w-full lg:w-1/2 relative z-10">
+      <span class:list={[
+        'text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6 border',
+        badge.bg, badge.border, badge.text,
+      ]}>
+        {badge.label}
+      </span>
+      {fields.title && (
+        <h2 class="text-4xl font-medium tracking-tighter text-zinc-900 mb-5">{fields.title}</h2>
+      )}
+      {contentHtml && (
+        <div class="service-content text-base leading-relaxed text-zinc-500 font-light" data-icon-color={badge.iconColor} set:html={contentHtml} />
+      )}
+      <a
+        href={fields.ctaLink || '#contact'}
+        class:list={[
+          'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all mt-10 shadow-sm',
+          isFirstCard
+            ? 'bg-[#0D2626] text-white hover:bg-[#1A4D4D] ring-1 ring-zinc-900/5'
+            : 'bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50',
+        ]}
+      >
+        {fields.ctaText || 'Get a Quote'}
+        <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+      </a>
+    </div>
+  )}
+
+  {/* Image */}
+  <div class="w-full lg:w-1/2 relative z-10">
+    <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden ring-1 ring-zinc-200/50 shadow-2xl bg-zinc-100">
+      <img
+        src={image}
+        alt={fields.title || 'Service'}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+        loading="lazy"
+      />
+    </div>
+  </div>
+
+  {/* Text — for imageLeft (image comes first in DOM, then text) */}
+  {!isImageRight && (
+    <div class="w-full lg:w-1/2 relative z-10">
+      <span class:list={[
+        'text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6 border',
+        badge.bg, badge.border, badge.text,
+      ]}>
+        {badge.label}
+      </span>
+      {fields.title && (
+        <h2 class="text-4xl font-medium tracking-tighter text-zinc-900 mb-5">{fields.title}</h2>
+      )}
+      {contentHtml && (
+        <div class="service-content text-base leading-relaxed text-zinc-500 font-light" data-icon-color={badge.iconColor} set:html={contentHtml} />
+      )}
+      <a
+        href={fields.ctaLink || '#contact'}
+        class:list={[
+          'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all mt-10 shadow-sm',
+          isFirstCard
+            ? 'bg-[#0D2626] text-white hover:bg-[#1A4D4D] ring-1 ring-zinc-900/5'
+            : 'bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50',
+        ]}
+      >
+        {fields.ctaText || 'Get a Quote'}
+        <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
+      </a>
+    </div>
+  )}
+
+</section>
+
+<style>
+  /* Paragraph spacing */
+  .service-content :global(p) {
+    margin-bottom: 2rem;
+  }
+
+  /* Check icon list styling */
+  .service-content :global(.service-checklist) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .service-content :global(.service-checklist li) {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .service-content :global(.service-checklist li p) {
+    margin-bottom: 0;
+    color: rgb(82 82 91); /* text-zinc-600 */
+    font-size: 0.875rem;
+    font-weight: 300;
+  }
+
+  .service-content :global(.service-checklist li::before) {
+    content: '';
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.125rem;
+    border-radius: 9999px;
+    background-color: rgb(250 250 249);
+    border: 1px solid rgb(228 228 231);
+    background-size: 14px 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Teal check icon (default / Most Popular) */
+  .service-content[data-icon-color="#00C4CC"] :global(.service-checklist li::before) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2300C4CC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.75l6 6 9-13.5'/%3E%3C/svg%3E");
+  }
+
+  /* Gold check icon (Specialized) */
+  .service-content[data-icon-color="#D4AF37"] :global(.service-checklist li::before) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.75l6 6 9-13.5'/%3E%3C/svg%3E");
+  }
+
+  /* Zinc check icon (Transitions) */
+  .service-content[data-icon-color="#a1a1aa"] :global(.service-checklist li::before) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.75l6 6 9-13.5'/%3E%3C/svg%3E");
+  }
+</style>

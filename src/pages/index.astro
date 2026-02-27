@@ -12,8 +12,8 @@ import { getHomePageData, getAssetUrl } from '@/lib/contentful';
 
 const page = await getHomePageData();
 
-const seoTitle = page?.seo?.title || "Karen's Cleaning — Trusted Home Cleaning Services";
-const seoDescription = page?.seo?.description || "Professional, reliable house cleaning services. Book your free estimate today.";
+const seoTitle = page?.seo?.metaTitle || "Karen's Cleaning — Trusted Home Cleaning Services";
+const seoDescription = page?.seo?.metaDescription || "Professional, reliable house cleaning services. Book your free estimate today.";
 const seoImage = page?.seo?.ogImage ? getAssetUrl(page.seo.ogImage) : undefined;
 
 const hasContentWithImage = page?.components.some(c => c.contentType === 'contentWithImageComponent') ?? false;

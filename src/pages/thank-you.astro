@@ -1,0 +1,156 @@
+---
+/**
+ * Thank You Page — /thank-you
+ * Generic confirmation page shown after any form submission.
+ * Fully static — no Contentful dependency.
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navigation from '@/components/global/Navigation.astro';
+import SiteFooter from '@/components/global/SiteFooter.astro';
+
+const phone = import.meta.env.CONTACT_PHONE || '(732) 693-2350';
+const phoneDigits = phone.replace(/\D/g, '');
+const hours = import.meta.env.CONTACT_HOURS || 'Monday–Friday, 9am–5pm';
+
+const nextSteps = [
+  {
+    icon: 'solar:letter-opened-linear',
+    title: 'We review your request',
+    description: 'Our team looks at the details you shared and puts together a personalized plan for your home.',
+  },
+  {
+    icon: 'solar:phone-calling-linear',
+    title: 'We reach out the same day',
+    description: 'Expect a call or email from us within a few hours to confirm details and answer any questions.',
+  },
+  {
+    icon: 'solar:calendar-mark-linear',
+    title: 'We schedule your cleaning',
+    description: 'Pick a date and time that works for you, and we handle the rest. Simple as that.',
+  },
+];
+---
+
+<BaseLayout
+  title="Thank You — Karen's Cleaning"
+  description="Your request has been received. We'll be in touch shortly."
+>
+  <Navigation currentPath="/thank-you" />
+
+  {/* Page Hero */}
+  <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
+    <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#00C4CC]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
+      <span class="text-zinc-400">Home</span>
+      <iconify-icon icon="solar:alt-arrow-right-linear" class="text-zinc-300"></iconify-icon>
+      <span class="text-zinc-900">Thank You</span>
+    </div>
+
+    <div class="w-20 h-20 rounded-full bg-[#00C4CC]/10 border border-[#00C4CC]/20 flex items-center justify-center mb-8">
+      <iconify-icon icon="solar:check-circle-bold" class="text-4xl text-[#00C4CC]"></iconify-icon>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-medium tracking-tighter text-zinc-900 mb-6 max-w-3xl">
+      Thank you!
+    </h1>
+    <p class="text-lg md:text-xl text-zinc-500 font-light max-w-2xl leading-relaxed">
+      Your request has been received. We'll be in touch shortly to get everything set up for you.
+    </p>
+  </section>
+
+  {/* Content Container */}
+  <div class="max-w-7xl mx-auto px-6 space-y-8 pb-32">
+
+    {/* What Happens Next Card */}
+    <section class="bg-white rounded-[2.5rem] p-8 md:p-12 lg:p-16 ring-1 ring-zinc-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+      <span class="bg-[#00C4CC]/10 border border-[#00C4CC]/20 text-[#00AAB0] text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6">
+        Next Steps
+      </span>
+      <h2 class="text-3xl md:text-4xl font-medium tracking-tighter text-zinc-900 mb-10">
+        Here's what happens next
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {nextSteps.map((step, i) => (
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                <iconify-icon icon={step.icon} class="text-2xl text-[#00C4CC]"></iconify-icon>
+              </div>
+              <span class="text-sm font-medium text-zinc-400">Step {i + 1}</span>
+            </div>
+            <h3 class="text-xl font-medium text-zinc-900 tracking-tighter">{step.title}</h3>
+            <p class="text-sm font-light text-zinc-500 leading-relaxed">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* Contact Info Row */}
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl p-6 ring-1 ring-zinc-200/60 shadow-sm flex gap-4 items-start">
+        <div class="w-10 h-10 rounded-full bg-[#00C4CC]/10 border border-[#00C4CC]/20 flex items-center justify-center flex-shrink-0">
+          <iconify-icon icon="solar:phone-linear" class="text-[#00C4CC] text-lg"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-zinc-900 mb-1">Prefer to call?</h3>
+          <a href={`tel:${phoneDigits}`} class="text-sm text-[#00C4CC] font-medium hover:text-[#00AAB0] transition-colors">{phone}</a>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 ring-1 ring-zinc-200/60 shadow-sm flex gap-4 items-start">
+        <div class="w-10 h-10 rounded-full bg-[#00C4CC]/10 border border-[#00C4CC]/20 flex items-center justify-center flex-shrink-0">
+          <iconify-icon icon="solar:clock-circle-linear" class="text-[#00C4CC] text-lg"></iconify-icon>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-zinc-900 mb-1">Business hours</h3>
+          <p class="text-sm text-zinc-500 font-light">{hours}</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  {/* Bottom CTA Banner */}
+  <section class="pb-24 px-6 relative">
+    <div class="max-w-5xl mx-auto bg-[#0D2626] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+      <div class="absolute inset-0 bg-[#00C4CC]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
+      <div class="absolute top-0 right-0 bg-[#D4AF37]/5 blur-[80px] w-[300px] h-[300px] rounded-full mix-blend-screen pointer-events-none"></div>
+
+      <h2 class="text-4xl font-medium tracking-tighter text-white mb-4 relative z-10">
+        Have questions?
+      </h2>
+      <p class="text-zinc-400 text-lg mb-10 max-w-lg mx-auto font-light relative z-10">
+        We're here to help. Give us a call or head back home to learn more about what we do.
+      </p>
+
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4 relative z-10">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center gap-2 bg-[#00C4CC] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] w-full sm:w-auto"
+        >
+          Back to Home
+        </a>
+        <a
+          href={`tel:${phoneDigits}`}
+          class="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-8 py-3.5 rounded-full text-base font-medium hover:bg-white/10 transition-all w-full sm:w-auto"
+        >
+          Call {phone}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .bg-mesh {
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+</style>
