@@ -1,0 +1,122 @@
+---
+/**
+ * Homepage
+ * Renders the home page from Contentful modular page builder
+ */
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navigation from '@/components/global/Navigation.astro';
+import SiteFooter from '@/components/global/SiteFooter.astro';
+import SectionRenderer from '@/components/SectionRenderer.astro';
+import ArticleCard from '@/components/cards/ArticleCard.astro';
+import { getPageBySlug, getArticles } from '@/lib/contentful';
+import { CloudinaryPresets } from '@/lib/cloudinary';
+
+// Fetch home page and latest articles from Contentful
+const [page, { articles: recentArticles }] = await Promise.all([
+  getPageBySlug('/'),
+  getArticles({ limit: 3 }),
+]);
+
+// Default content if Contentful is not configured or page not found
+const defaultTitle = 'Your Site Name';
+const footerContent = {
+  logoUrl: '/logo.png',
+  tagline: 'Hand it off. It\'s handled.',
+};
+
+const title = page?.title || defaultTitle;
+const description = page?.description || 'Full ownership of your digital operations. Website, content, CRM, and more — handled by one person who owns it all.';
+
+// Extract hero image URL for LCP preload
+const heroImageAsset = (page?.heroSection as any)?.image;
+const heroImageRaw = heroImageAsset?.fields?.file?.url;
+const heroImageUrl = heroImageRaw
+  ? CloudinaryPresets.hero(heroImageRaw.startsWith('//') ? 'https:' + heroImageRaw : heroImageRaw, 800)
+  : null;
+---
+
+<BaseLayout title={title} description={description}>
+  {heroImageUrl && (
+    <link slot="preload" rel="preload" as="image" href={heroImageUrl} fetchpriority="high" />
+  )}
+  
+  <Navigation currentPath="/" />
+
+  {page ? (
+    <>
+      {/* Render Hero Section first if present */}
+      {page.heroSection && (
+        <SectionRenderer section={page.heroSection} index={0} />
+      )}
+      {/* Then render other sections */}
+      {page.sections.map((section, index) => (
+        <SectionRenderer section={section} index={index + 1} />
+      ))}
+    </>
+  ) : (
+    <!-- Fallback content if no page or sections -->
+    <section class="w-full pt-40 pb-24 md:pt-52 md:pb-32 px-6 md:px-12 bg-white text-black">
+      <div class="max-w-5xl mx-auto">
+        <h1 class="text-6xl md:text-8xl font-semibold tracking-tighter leading-[0.9] text-black mb-10">
+          Hand It Off.<br/>It's Handled.
+        </h1>
+        <div class="max-w-2xl">
+          <p class="text-xl md:text-2xl text-neutral-600 font-body font-light leading-relaxed mb-10">
+            Your website, email, CRM, and content — handled by one person who owns it all.
+          </p>
+          <a
+            href="#contact"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center px-8 py-4 bg-black text-white text-base md:text-lg font-medium rounded-lg hover:bg-neutral-800 transition-all duration-300 group"
+          >
+            Book a Call
+            <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Recent Articles */}
+  {recentArticles.length > 0 && (
+    <section class="w-full py-24 px-6 md:px-12 bg-white border-t border-neutral-100">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-end justify-between mb-12">
+          <div>
+            <p class="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-3">Writing</p>
+            <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-black">Thoughts on Operations</h2>
+          </div>
+          <a href="/articles" class="hidden md:inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-black transition-colors">
+            View all articles <span>→</span>
+          </a>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {recentArticles.map((article) => (
+            <ArticleCard
+              slug={article.slug}
+              title={article.title}
+              excerpt={article.excerpt}
+              category={article.category.name}
+              publishDate={article.publishDate}
+              readingTime={article.readingTime}
+              imageUrl={article.featuredImage?.url}
+              imageAlt={article.featuredImage?.alt}
+            />
+          ))}
+        </div>
+        <div class="mt-10 text-center md:hidden">
+          <a href="/articles" class="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-black transition-colors">
+            View all articles <span>→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <SiteFooter
+    logoUrl={footerContent.logoUrl}
+    tagline={footerContent.tagline}
+  />
+</BaseLayout>

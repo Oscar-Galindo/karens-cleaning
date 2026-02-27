@@ -1,0 +1,904 @@
+/**
+ * Contentful Client - Your Site Name
+ *
+ * Type-safe content fetching from Contentful CMS
+ */
+
+import { createClient, type Asset } from 'contentful';
+
+// Initialize Contentful client
+const spaceId = import.meta.env.CONTENTFUL_SPACE_ID || '';
+const accessToken = import.meta.env.CONTENTFUL_ACCESS_TOKEN || '';
+const environment = import.meta.env.CONTENTFUL_ENVIRONMENT || 'master';
+
+// Only log during development
+if (import.meta.env.DEV) {
+  console.log('🔌 Initializing Contentful Client:');
+  console.log('  Space ID:', spaceId ? `${spaceId.substring(0, 8)}...` : '❌ MISSING');
+  console.log('  Access Token:', accessToken ? `${accessToken.substring(0, 8)}...` : '❌ MISSING');
+  console.log('  Environment:', environment);
+}
+
+// Create client only if credentials are available
+export const client = (spaceId && accessToken) ? createClient({
+  space: spaceId,
+  accessToken: accessToken,
+  environment: environment,
+}) : null;
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+export interface NavigationItem {
+  label: string;
+  url: string;
+  external?: boolean;
+}
+
+export interface Navigation {
+  logo: Asset;
+  navLinks: NavigationItem[];
+  ctaText: string;
+  ctaUrl: string;
+  footerLinks?: {
+    services: NavigationItem[];
+    company: NavigationItem[];
+    legal: NavigationItem[];
+  };
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+}
+
+export interface HeroSection {
+  badge?: string;
+  headline: string;
+  subheadline: string;
+  backgroundImage?: Asset;
+  ctaText: string;
+  ctaUrl: string;
+  secondaryCtaText?: string;
+  secondaryCtaUrl?: string;
+}
+
+export interface ContentBlock {
+  blockType: 'features' | 'steps' | 'stats' | 'caseStudy' | 'cta' | 'text';
+  title?: string;
+  description?: string;
+  items?: any[]; // Flexible for different block types
+  image?: Asset;
+  ctaText?: string;
+  ctaUrl?: string;
+}
+
+export interface ServiceItem {
+  icon: string; // Icon name (e.g., 'search' for lucide icons)
+  title: string;
+  description: string;
+  url?: string;
+}
+
+export interface StepItem {
+  stepNumber: number;
+  title: string;
+  description: string;
+}
+
+export interface StatItem {
+  value: string;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+}
+
+export interface TestimonialItem {
+  quote: string;
+  rating: number;
+  authorName: string;
+  authorTitle: string;
+  authorCompany: string;
+  authorPhoto?: Asset;
+}
+
+export interface PricingTier {
+  name: string;
+  price: string;
+  period: string; // 'month' | 'year'
+  description: string;
+  features: string[];
+  ctaText: string;
+  ctaUrl: string;
+  featured?: boolean;
+  badge?: string; // e.g., "Most Popular"
+}
+
+export interface HomePage {
+  hero: HeroSection;
+  trustedByLogos?: Asset[];
+  servicesSection?: ContentBlock;
+  howItWorksSection?: ContentBlock;
+  statsSection?: StatItem[];
+  testimonialsSection?: TestimonialItem[];
+  caseStudySection?: ContentBlock;
+  pricingPreview?: PricingTier[];
+  bottomCta?: HeroSection;
+  seoTitle: string;
+  seoDescription: string;
+  seoImage?: Asset;
+}
+
+export interface StandardPage {
+  title: string;
+  slug: string;
+  hero?: HeroSection;
+  contentBlocks?: ContentBlock[];
+  seoTitle: string;
+  seoDescription: string;
+  seoImage?: Asset;
+}
+
+export interface GlobalSettings {
+  siteName: string;
+  siteTagline?: string;
+  logo: Asset;
+  favicon?: Asset;
+  defaultSeoTitle: string;
+  defaultSeoDescription: string;
+  defaultSeoImage?: Asset;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+}
+
+// ============================================================================
+// NEW CONTENT TYPES - Minimalist Homepage
+// ============================================================================
+
+export interface HomepageV2 {
+  title: string;
+  heroHeadline: string;
+  heroSubheadline: string;
+  heroTargetAudience: string;
+  heroImageUrl?: string;        // Optional URL field
+  heroImage?: Asset;             // Optional asset field
+  heroImageCaption?: string;
+  problemSectionTitle: string;
+  solutionHeadline: string;
+  solutionHeadlineAccent: string;
+  solutionPoint1Title: string;
+  solutionPoint1Description: string;
+  solutionPoint2Title: string;
+  solutionPoint2Description: string;
+  solutionPoint3Title: string;
+  solutionPoint3Description: string;
+  responsibilityHeadline: string;
+  responsibilitySubheadline: string;
+  processHeadline: string;
+  processSubheadline: string;
+  processQuote: string;
+  aboutBadge: string;
+  aboutName: string;
+  aboutTitle: string;
+  aboutBioPrimary: string;
+  aboutBioSecondary: string;
+  aboutImageUrl?: string;       // Optional URL field
+  aboutImage?: Asset;            // Optional asset field
+  disqualifierHeadline: string;
+  footerHeadline: string;
+  footerSubheadline: string;
+  footerCtaText: string;
+  footerCtaLink: string;
+  logoUrl?: string;              // Optional URL field
+  logo?: Asset;                  // Optional asset field
+}
+
+export interface ProblemCardV2 {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface ProcessStepV2 {
+  title: string;
+  description: string;
+  order: number;
+}
+
+export interface DisqualifierV2 {
+  text: string;
+}
+
+// ============================================================================
+// CONTENT FETCHERS
+// ============================================================================
+
+/**
+ * Get Global Settings (singleton)
+ */
+export async function getGlobalSettings(): Promise<GlobalSettings | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'globalSettings',
+      include: 2,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) return null;
+
+    const item = entries.items[0];
+    return item.fields as unknown as GlobalSettings;
+  } catch (error) {
+    console.error('Error fetching global settings:', error);
+    return null;
+  }
+}
+
+/**
+ * Get Navigation (singleton)
+ */
+export async function getNavigation(): Promise<Navigation | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'navigation',
+      include: 2,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) return null;
+
+    const item = entries.items[0];
+    return item.fields as unknown as Navigation;
+  } catch (error) {
+    console.error('Error fetching navigation:', error);
+    return null;
+  }
+}
+
+/**
+ * Get Homepage Content
+ */
+export async function getHomePage(): Promise<HomePage | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'homepageContent',
+      include: 3, // Resolve nested references
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) return null;
+
+    const item = entries.items[0];
+    return item.fields as unknown as HomePage;
+  } catch (error) {
+    console.error('Error fetching homepage:', error);
+    return null;
+  }
+}
+
+/**
+ * Get Standard Page by slug
+ */
+export async function getStandardPage(slug: string): Promise<StandardPage | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'standardPage',
+      'fields.slug': slug,
+      include: 3,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) return null;
+
+    const item = entries.items[0];
+    return item.fields as unknown as StandardPage;
+  } catch (error) {
+    console.error(`Error fetching page ${slug}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get all Standard Pages (for generating routes)
+ */
+export async function getAllStandardPages(): Promise<StandardPage[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'standardPage',
+      include: 1,
+    });
+
+    return entries.items.map(item => item.fields as unknown as StandardPage);
+  } catch (error) {
+    console.error('Error fetching all pages:', error);
+    return [];
+  }
+}
+
+/**
+ * Get Pricing Tiers
+ */
+export async function getPricingTiers(): Promise<PricingTier[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'pricingTier',
+      order: ['fields.order'] as any,
+    });
+
+    return entries.items.map(item => item.fields as unknown as PricingTier);
+  } catch (error) {
+    console.error('Error fetching pricing tiers:', error);
+    return [];
+  }
+}
+
+/**
+ * Get Hero Section by ID or reference
+ */
+export async function getHeroSection(id: string): Promise<HeroSection | null> {
+  if (!client) return null;
+  try {
+    const entry = await client.getEntry(id);
+    return entry.fields as unknown as HeroSection;
+  } catch (error) {
+    console.error(`Error fetching hero section ${id}:`, error);
+    return null;
+  }
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Get Contentful asset URL
+ */
+export function getAssetUrl(asset?: Asset): string | null {
+  if (!asset?.fields?.file?.url) return null;
+
+  const url = asset.fields.file.url;
+  // Ensure URL is absolute (url is always a string from Contentful's AssetFile)
+  if (typeof url === 'string') {
+    return url.startsWith('//') ? `https:${url}` : url;
+  }
+  return null;
+}
+
+/**
+ * Get optimized image URL with transformations
+ */
+export function getOptimizedImageUrl(
+  asset?: Asset,
+  options?: {
+    width?: number;
+    height?: number;
+    format?: 'jpg' | 'png' | 'webp';
+    quality?: number;
+    fit?: 'pad' | 'fill' | 'scale' | 'crop' | 'thumb';
+  }
+): string | null {
+  const baseUrl = getAssetUrl(asset);
+  if (!baseUrl) return null;
+  
+  const params = new URLSearchParams();
+  if (options?.width) params.append('w', options.width.toString());
+  if (options?.height) params.append('h', options.height.toString());
+  if (options?.format) params.append('fm', options.format);
+  if (options?.quality) params.append('q', options.quality.toString());
+  if (options?.fit) params.append('fit', options.fit);
+  
+  return `${baseUrl}?${params.toString()}`;
+}
+
+/**
+ * Extract plain text from Contentful Rich Text
+ */
+export function getRichTextPlainText(richText: any): string {
+  if (!richText?.content) return '';
+  
+  return richText.content
+    .map((node: any) => {
+      if (node.nodeType === 'paragraph' && node.content) {
+        return node.content.map((c: any) => c.value || '').join('');
+      }
+      return '';
+    })
+    .join(' ')
+    .trim();
+}
+
+// ============================================================================
+// NEW FETCHERS - Minimalist Homepage V2
+// ============================================================================
+
+/**
+ * Get Homepage V2 Content (Minimalist Design)
+ * Note: 3JPGMyDDNZHXDgcyp3ioxr is the CONTENT TYPE ID, not entry ID
+ */
+export async function getHomepageV2(): Promise<HomepageV2 | null> {
+  if (!client) return null;
+  try {
+    if (import.meta.env.DEV) {
+      console.log('Fetching Homepage V2 content...');
+    }
+
+    const entries = await client.getEntries({
+      content_type: 'homepageV2',
+      include: 2,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) {
+      console.error('❌ No Homepage V2 entries found');
+      return null;
+    }
+
+    if (import.meta.env.DEV) {
+      console.log('✅ Homepage V2 entry found!');
+    }
+    const entry = entries.items[0];
+    return entry.fields as unknown as HomepageV2;
+  } catch (error: any) {
+    console.error('❌ Error fetching Homepage V2:', error.message);
+    return null;
+  }
+}
+
+/**
+ * Get Problem Cards V2
+ */
+export async function getProblemCardsV2(): Promise<ProblemCardV2[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'problemCard',
+    });
+    return entries.items.map(item => item.fields as unknown as ProblemCardV2);
+  } catch (error) {
+    console.error('Error fetching Problem Cards V2:', error);
+    return [];
+  }
+}
+
+/**
+ * Get Process Steps V2
+ */
+export async function getProcessStepsV2(): Promise<ProcessStepV2[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'processStep',
+      order: ['fields.order'] as any,
+    });
+    return entries.items.map(item => item.fields as unknown as ProcessStepV2);
+  } catch (error) {
+    console.error('Error fetching Process Steps V2:', error);
+    return [];
+  }
+}
+
+/**
+ * Get Disqualifiers V2
+ */
+export async function getDisqualifiersV2(): Promise<DisqualifierV2[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'disqualifier',
+    });
+    return entries.items.map(item => item.fields as unknown as DisqualifierV2);
+  } catch (error) {
+    console.error('Error fetching Disqualifiers V2:', error);
+    return [];
+  }
+}
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+
+export interface NavMenuItem {
+  label: string;
+  url: string;
+  isActive?: boolean;
+}
+
+export interface NavCTAButton {
+  text: string;
+  url: string;
+  external?: boolean;
+}
+
+export interface SiteNavigation {
+  title: string;
+  logo?: Asset;
+  logoUrl?: string;
+  logoText?: string;
+  menuItems: NavMenuItem[];
+  ctaButton: NavCTAButton;
+}
+
+/**
+ * Get Site Navigation
+ */
+export async function getSiteNavigation(): Promise<SiteNavigation | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'navigation',
+      include: 2,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) {
+      console.error('❌ No Navigation entry found');
+      return null;
+    }
+
+    const entry = entries.items[0];
+    return entry.fields as unknown as SiteNavigation;
+  } catch (error: any) {
+    console.error('❌ Error fetching Navigation:', error.message);
+    return null;
+  }
+}
+
+// ============================================================================
+// MODULAR PAGE BUILDER TYPES
+// ============================================================================
+
+export interface HeroSectionContent {
+  contentType: 'heroSection';
+  internalName?: string;
+  headline: string;
+  subheadline?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  backgroundImage?: Asset;
+}
+
+export interface CardItem {
+  icon?: string;
+  title: string;
+  description?: string;
+}
+
+export interface CardGridContent {
+  contentType: 'cardGrid' | 'cardGrid2' | 'cardGrid3';
+  internalName?: string;
+  title?: string;
+  description?: string;
+  cards?: any[];
+}
+
+export interface FAQSectionContent {
+  contentType: 'faqSection';
+  internalName?: string;
+  question: string;
+  answer: any; // RichText
+}
+
+export interface CallToActionContent {
+  contentType: 'callToAction';
+  internalName?: string;
+  headline: string;
+  bodyText?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}
+
+export interface ContentSectionContent {
+  contentType: 'contentSection' | 'contentSection2' | 'contentSection3' | 'contentSection4' | 'contentSection5' | 'contentSection6' | 'contentSection7';
+  internalName?: string;
+  heading?: string;
+  subheading?: string;
+  bodyText?: string;
+  image?: Asset;
+  ctaText?: string;
+  ctaUrl?: string;
+}
+
+export type PageSection = 
+  | HeroSectionContent 
+  | CardGridContent 
+  | FAQSectionContent 
+  | CallToActionContent 
+  | ContentSectionContent;
+
+export interface ModularPage {
+  internalName?: string;
+  name?: string;
+  title?: string;
+  slug: string;
+  description?: string;
+  heroSection?: PageSection;
+  sections: PageSection[];
+  navigation?: any;
+  footer?: any;
+}
+
+/**
+ * Get Page by slug with all sections resolved
+ */
+export async function getPageBySlug(slug: string): Promise<ModularPage | null> {
+  if (!client) return null;
+  try {
+    // Normalize slug - handle both with and without leading slash
+    const normalizedSlug = slug.startsWith('/') ? slug : '/' + slug;
+    
+    const entries = await client.getEntries({
+      content_type: 'page',
+      'fields.slug': normalizedSlug,
+      include: 3,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) {
+      // Try without leading slash
+      const altEntries = await client.getEntries({
+        content_type: 'page',
+        'fields.slug': slug.replace(/^\//, ''),
+        include: 3,
+        limit: 1,
+      });
+      
+      if (altEntries.items.length === 0) {
+        console.error('❌ No page found for slug:', slug);
+        return null;
+      }
+      
+      return transformPageEntry(altEntries.items[0]);
+    }
+
+    return transformPageEntry(entries.items[0]);
+  } catch (error: any) {
+    console.error('❌ Error fetching page:', error.message);
+    return null;
+  }
+}
+
+/**
+ * Get all pages (for generating routes)
+ */
+export async function getAllPages(): Promise<ModularPage[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'page',
+      include: 3,
+    });
+
+    return entries.items.map(transformPageEntry);
+  } catch (error: any) {
+    console.error('❌ Error fetching all pages:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Transform Contentful entry to ModularPage
+ */
+function transformPageEntry(entry: any): ModularPage {
+  const fields = entry.fields;
+  
+  // Transform heroSection if present
+  let heroSection: PageSection | undefined;
+  if (fields.heroSection) {
+    const heroContentType = fields.heroSection.sys?.contentType?.sys?.id || 'heroSection';
+    heroSection = {
+      contentType: heroContentType,
+      ...fields.heroSection.fields,
+    };
+  }
+
+  // Transform sections array
+  const sections: PageSection[] = (fields.sections || []).map((section: any) => {
+    const contentType = section.sys?.contentType?.sys?.id || 'unknown';
+    return {
+      contentType,
+      ...section.fields,
+    };
+  });
+
+  return {
+    internalName: fields.internalName,
+    name: fields.name,
+    title: fields.title,
+    slug: fields.slug,
+    description: fields.description,
+    heroSection,
+    sections,
+    navigation: fields.navigation,
+    footer: fields.footer,
+  };
+}
+
+// ============================================================================
+// ARTICLES / BLOG
+// ============================================================================
+
+export interface ArticleCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+export interface Article {
+  slug: string;
+  title: string;
+  category: ArticleCategory;
+  publishDate: string;
+  readingTime: number;
+  excerpt: string;
+  featuredImage?: { url: string; alt: string };
+  body: any;
+  author: string;
+  relatedArticles?: Article[];
+  tags?: string[];
+}
+
+function transformArticleCategory(entry: any): ArticleCategory {
+  return {
+    id: entry.sys.id,
+    name: String(entry.fields?.name || ''),
+    slug: String(entry.fields?.slug || ''),
+    description: entry.fields?.description ? String(entry.fields.description) : undefined,
+  };
+}
+
+function resolveImage(ref: any): { url: string; alt: string } | undefined {
+  try {
+    if (!ref?.fields?.file?.url) return undefined;
+    const url = ref.fields.file.url;
+    return {
+      url: typeof url === 'string' ? (url.startsWith('//') ? `https:${url}` : url) : '',
+      alt: String(ref.fields.title || ref.fields.description || ''),
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+function transformArticle(entry: any, depth = 0): Article {
+  const fields = entry.fields || {};
+
+  let category: ArticleCategory = { id: '', name: '', slug: '' };
+  try {
+    const catRef = fields.category;
+    if (catRef?.sys?.id && catRef?.fields) {
+      category = transformArticleCategory(catRef);
+    }
+  } catch { /* use default */ }
+
+  let relatedArticles: Article[] | undefined;
+  if (depth < 1 && Array.isArray(fields.relatedArticles)) {
+    try {
+      relatedArticles = fields.relatedArticles
+        .filter((r: any) => r?.fields?.slug)
+        .map((r: any) => transformArticle(r, depth + 1));
+    } catch { relatedArticles = undefined; }
+  }
+
+  return {
+    slug: String(fields.slug || ''),
+    title: String(fields.title || ''),
+    category,
+    publishDate: String(fields.publishDate || ''),
+    readingTime: typeof fields.readingTime === 'number' ? fields.readingTime : 5,
+    excerpt: String(fields.excerpt || ''),
+    featuredImage: resolveImage(fields.featuredImage),
+    body: fields.body || null,
+    author: String(fields.author || ''),
+    relatedArticles,
+    tags: Array.isArray(fields.tags) ? fields.tags.map(String) : [],
+  };
+}
+
+/**
+ * Get all article categories
+ */
+export async function getArticleCategories(): Promise<ArticleCategory[]> {
+  if (!client) return [];
+  try {
+    const entries = await client.getEntries({
+      content_type: 'articleCategory',
+      limit: 50,
+    });
+    return entries.items.map(transformArticleCategory);
+  } catch (error: any) {
+    console.error('Error fetching article categories:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Get articles with optional filtering
+ */
+export async function getArticles(options?: {
+  categorySlug?: string;
+  limit?: number;
+  skip?: number;
+}): Promise<{ articles: Article[]; total: number }> {
+  if (!client) return { articles: [], total: 0 };
+  try {
+    const query: any = {
+      content_type: 'article',
+      include: 1,
+      order: ['-fields.publishDate'] as any,
+      limit: options?.limit || 100,
+      skip: options?.skip || 0,
+    };
+
+    if (options?.categorySlug) {
+      try {
+        const categories = await client.getEntries({
+          content_type: 'articleCategory',
+          'fields.slug': options.categorySlug,
+          limit: 1,
+        });
+        if (categories.items.length > 0) {
+          query['fields.category.sys.id'] = categories.items[0].sys.id;
+        }
+      } catch (catError: any) {
+        console.error('Error filtering by category:', catError.message);
+      }
+    }
+
+    const response = await client.getEntries(query);
+
+    const articles: Article[] = [];
+    for (const item of response.items) {
+      try {
+        articles.push(transformArticle(item));
+      } catch (itemError: any) {
+        console.error(`Skipping article "${(item as any).fields?.title}":`, itemError.message);
+      }
+    }
+
+    articles.sort((a, b) =>
+      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+    );
+
+    return { articles, total: response.total };
+  } catch (error: any) {
+    console.error('Error fetching articles:', error.message);
+    return { articles: [], total: 0 };
+  }
+}
+
+/**
+ * Get a single article by slug
+ */
+export async function getArticle(slug: string): Promise<Article | null> {
+  if (!client) return null;
+  try {
+    const entries = await client.getEntries({
+      content_type: 'article',
+      'fields.slug': slug,
+      include: 2,
+      limit: 1,
+    });
+
+    if (entries.items.length === 0) return null;
+    return transformArticle(entries.items[0]);
+  } catch (error: any) {
+    console.error(`Error fetching article ${slug}:`, error.message);
+    return null;
+  }
+}
