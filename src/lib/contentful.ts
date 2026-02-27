@@ -11,13 +11,13 @@ const spaceId = import.meta.env.CONTENTFUL_SPACE_ID || '';
 const accessToken = import.meta.env.CONTENTFUL_ACCESS_TOKEN || '';
 const environment = import.meta.env.CONTENTFUL_ENVIRONMENT || 'master';
 
-// Only log during development
-if (import.meta.env.DEV) {
-  console.log('🔌 Initializing Contentful Client:');
-  console.log('  Space ID:', spaceId ? `${spaceId.substring(0, 8)}...` : '❌ MISSING');
-  console.log('  Access Token:', accessToken ? `${accessToken.substring(0, 8)}...` : '❌ MISSING');
-  console.log('  Environment:', environment);
-}
+// Temporary: log in all environments to debug Vercel
+console.log('Contentful init:',
+  'space=', spaceId ? 'SET' : 'MISSING',
+  'token=', accessToken ? 'SET' : 'MISSING',
+  'env=', environment,
+  'client=', (spaceId && accessToken) ? 'CREATED' : 'NULL'
+);
 
 // Create client only if credentials are available
 export const client = (spaceId && accessToken) ? createClient({
