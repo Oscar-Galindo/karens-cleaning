@@ -74,7 +74,7 @@ const phoneDigits = phone.replace(/\D/g, '');
 
 // Fallback image for story card
 const storyImage = storyCard?.contentType === 'contentWithImageComponent'
-  ? getAssetUrl((storyCard.fields as ContentWithImageComponentFields).image)
+  ? getAssetUrl((storyCard.fields as ContentWithImageComponentFields).image, { width: 800, fit: 'fill' })
   : null;
 const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop';
 ---

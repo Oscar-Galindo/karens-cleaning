@@ -16,7 +16,7 @@ export interface Props {
 
 const { fields, index } = Astro.props;
 
-const imageUrl = getAssetUrl(fields.image);
+const imageUrl = getAssetUrl(fields.image, { width: 800, fit: 'fill' });
 
 // Fallback images when none uploaded to Contentful
 const fallbackImages = [
