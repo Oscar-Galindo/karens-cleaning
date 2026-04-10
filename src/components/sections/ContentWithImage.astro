@@ -6,7 +6,6 @@
 
 import type { ContentWithImageComponentFields } from '@/lib/contentful';
 import { getAssetUrl } from '@/lib/contentful';
-import { CloudinaryPresets } from '@/lib/cloudinary';
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 
 export interface Props {
@@ -15,8 +14,7 @@ export interface Props {
 
 const { fields } = Astro.props;
 
-const imageUrl = getAssetUrl(fields.image);
-const image = imageUrl ? CloudinaryPresets.hero(imageUrl, 800) : null;
+const image = getAssetUrl(fields.image, { width: 800, fit: 'fill' });
 const isImageLeft = fields.imagePosition !== 'right';
 
 let bodyHtml = '';

@@ -379,8 +379,9 @@ export function getAssetUrl(
 
   const baseUrl = rawUrl.startsWith('//') ? `https:${rawUrl}` : rawUrl;
 
-  const isImage = asset.fields.file.contentType?.toString().startsWith('image/');
-  if (!isImage || opts?.raw) return baseUrl;
+  const ct = asset.fields.file.contentType?.toString() || '';
+  const isRasterImage = ct.startsWith('image/') && !ct.includes('svg');
+  if (!isRasterImage || opts?.raw) return baseUrl;
 
   const params = new URLSearchParams();
   params.append('fm', opts?.format || 'webp');
