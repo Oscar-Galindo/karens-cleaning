@@ -60,6 +60,10 @@ See `.env.example` for the full list of configuration options.
 
 ### 3. Set up Contentful
 
+**Contentful account:** `ogkarenscleaning@gmail.com`
+**Space ID:** `sm8otodtkz58`
+**Dashboard:** [app.contentful.com/spaces/sm8otodtkz58](https://app.contentful.com/spaces/sm8otodtkz58/)
+
 Create the following content types in your Contentful space:
 
 **Pages:**

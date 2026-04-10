@@ -11,7 +11,7 @@ const settings = await getSiteSettings();
 const footer = settings?.footer;
 
 const companyName = footer?.companyName || settings?.logoText || "Karen's";
-const logoUrl = settings?.logoUrl || null;
+const logoUrl = settings?.logoUrl || 'https://res.cloudinary.com/dhs9d8tou/image/upload/v1773532312/karenshomecleaning_1_irmdgf.png';
 const logoText = settings?.logoText || "Karen's";
 
 // Social links with icon mapping
@@ -58,7 +58,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
 
       {/* Logo & Socials */}
       <div class="md:col-span-1">
-        <a href="/" class="flex items-center text-[#00C4CC] mb-8">
+        <a href="/" class="flex items-center text-[#04358D] mb-8">
           {logoUrl ? (
             <img src={logoUrl} alt={companyName} class="h-12 w-auto brightness-0 invert" />
           ) : (
@@ -72,7 +72,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#00C4CC] hover:bg-[#F8F8F8]/10 transition-colors"
+                class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#F8F8F8] hover:text-[#2C57A7] hover:bg-[#F8F8F8]/10 transition-colors"
                 aria-label={social.platform}
               >
                 <iconify-icon icon={social.icon} class="text-lg"></iconify-icon>
@@ -92,7 +92,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={item.link}
                 target={item.openInNewTab ? '_blank' : undefined}
                 rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                class="hover:text-[#00C4CC] transition-colors"
+                class="text-[#F8F8F8]/70 hover:text-[#2C57A7] transition-colors"
               >
                 {item.label}
               </a>
@@ -111,7 +111,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={item.link}
                 target={item.openInNewTab ? '_blank' : undefined}
                 rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                class="text-[#00C4CC] font-normal hover:text-[#00898F] transition-colors"
+                class="text-[#F8F8F8] font-normal hover:text-[#2C57A7] transition-colors"
               >
                 {item.label}
               </a>
@@ -134,7 +134,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
       {legalCol.length > 0 && (
         <div class="flex gap-8">
           {legalCol.map((item) => (
-            <a href={item.link} class="hover:text-[#00C4CC] transition-colors">{item.label}</a>
+            <a href={item.link} class="text-[#F8F8F8]/50 hover:text-[#2C57A7] transition-colors">{item.label}</a>
           ))}
         </div>
       )}

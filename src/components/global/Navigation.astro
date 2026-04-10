@@ -24,7 +24,7 @@ const menuItems = settings?.navItems.length
     ];
 
 const logoText = settings?.logoText || "Karen's";
-const logoUrl = settings?.logoUrl || null;
+const logoUrl = settings?.logoUrl || 'https://res.cloudinary.com/dhs9d8tou/image/upload/v1773532312/karenshomecleaning_1_irmdgf.png';
 const companyName = settings?.companyName || "Karen's";
 const ctaText = settings?.ctaButtonText || 'Get Your Estimate';
 const ctaLink = settings?.ctaButtonLink || '/book';
@@ -40,7 +40,7 @@ function isActive(url: string): boolean {
   <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
 
     <!-- Logo -->
-    <a href="/" class="flex items-center text-[#00C4CC]">
+    <a href="/" class="flex items-center text-[#04358D]">
       {logoUrl ? (
         <img src={logoUrl} alt={companyName} class="h-10 w-auto" />
       ) : (
@@ -57,7 +57,7 @@ function isActive(url: string): boolean {
           rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
           class:list={[
             'text-lg font-normal transition-colors',
-            isActive(item.link) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
+            isActive(item.link) ? 'text-[#04358D]' : 'text-[#1A1A1A] hover:text-[#04358D]'
           ]}
         >
           {item.label}
@@ -99,7 +99,7 @@ function isActive(url: string): boolean {
           href={item.link}
           class:list={[
             'text-xl font-normal transition-colors',
-            isActive(item.link) ? 'text-[#00C4CC]' : 'text-[#1A1A1A] hover:text-[#00C4CC]'
+            isActive(item.link) ? 'text-[#04358D]' : 'text-[#1A1A1A] hover:text-[#04358D]'
           ]}
         >
           {item.label}

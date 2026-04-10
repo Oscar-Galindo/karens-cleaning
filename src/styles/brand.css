@@ -12,18 +12,18 @@
    ========================================================================= */
 
 :root {
-  /* === PRIMARY COLORS (Brand Teal — #00C4CC) === */
-  --color-primary-50: #F0FDFD;
-  --color-primary-100: #CCFBFC;
-  --color-primary-200: #99F5F7;
-  --color-primary-300: #5EEDF0;
-  --color-primary-400: #2DD9DE;
-  --color-primary-500: #00C4CC;
-  --color-primary-600: #00A3AA;
-  --color-primary-700: #00898F;
-  --color-primary-800: #006E73;
-  --color-primary-900: #005A5E;
-  --color-primary-950: #003A3D;
+  /* === PRIMARY COLORS (Brand Blue — #04358D) === */
+  --color-primary-50: #EFF4FB;
+  --color-primary-100: #D8E2F5;
+  --color-primary-200: #B1C5EB;
+  --color-primary-300: #7A9DDC;
+  --color-primary-400: #4A75C8;
+  --color-primary-500: #04358D;
+  --color-primary-600: #032D78;
+  --color-primary-700: #2C57A7;
+  --color-primary-800: #021E52;
+  --color-primary-900: #01153D;
+  --color-primary-950: #010D28;
   --color-primary: var(--color-primary-500);
   
   /* === SECONDARY COLORS (Brand Orange) === */
@@ -89,7 +89,7 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --shadow-card: 0 2px 8px -2px rgb(0 0 0 / 0.08), 0 4px 16px -4px rgb(0 0 0 / 0.12);
-  --shadow-button: 0 4px 12px -2px rgb(0 196 204 / 0.3);
+  --shadow-button: 0 4px 12px -2px rgb(4 53 141 / 0.2);
   
   /* === TRANSITIONS === */
   --transition-fast: 150ms ease;

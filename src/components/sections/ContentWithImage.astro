@@ -35,7 +35,7 @@ if (fields.content) {
     {/* Image */}
     {image && (
       <div class:list={['w-full md:w-5/12 relative', isImageLeft ? 'md:order-1' : 'md:order-2']}>
-        <div class="absolute inset-5 border border-[#00C4CC]/20 rounded-[2.5rem] z-0"></div>
+        <div class="absolute inset-5 border border-[#04358D]/20 rounded-[2.5rem] z-0"></div>
         <img
           src={image}
           alt={fields.title || ''}
@@ -55,7 +55,7 @@ if (fields.content) {
 
       {bodyHtml && (
         <div
-          class="space-y-8 text-xl text-[#1A1A1A]/70 leading-relaxed font-light [&_p]:mb-0 [&_a]:text-[#00C4CC] [&_a]:hover:text-[#00898F]"
+          class="space-y-8 text-xl text-[#1A1A1A]/70 leading-relaxed font-light [&_p]:mb-0 [&_a]:text-[#04358D] [&_a]:hover:text-[#2C57A7]"
           set:html={bodyHtml}
         />
       )}

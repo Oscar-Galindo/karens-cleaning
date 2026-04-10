@@ -31,7 +31,7 @@ const badgeIcons = [
   'solar:bolt-linear',
   'solar:star-shine-linear',
 ];
-const badgeIconColors = ['text-[#00C4CC]', 'text-[#00C4CC]', 'text-[#D4AF37]'];
+const badgeIconColors = ['text-[#04358D]', 'text-[#04358D]', 'text-[#D4AF37]'];
 
 // Service card icons (mapped by title keyword)
 const serviceIconMap: Record<string, string> = {
@@ -95,7 +95,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
   {/* Page Hero */}
   <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
     <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#00C4CC]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#04358D]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
     <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
 
     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
@@ -175,7 +175,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
               const icon = getServiceIcon(service.fields.title, i);
               const subtitle = getServiceSubtitle(service.fields.title) || service.fields.description || '';
               return (
-                <div class="service-card border border-zinc-200 hover:border-[#00C4CC]/50 hover:bg-[#00C4CC]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative" data-service-card>
+                <div class="service-card border border-zinc-200 hover:border-[#04358D]/50 hover:bg-[#04358D]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative" data-service-card>
                   <div class="absolute top-3 right-3 w-5 h-5 rounded-full border border-zinc-200 flex items-center justify-center check-icon hidden">
                     <iconify-icon icon="solar:check-linear" class="text-white text-xs"></iconify-icon>
                   </div>
@@ -207,13 +207,13 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
           <div class="space-y-6">
             <div>
               <label class="text-sm font-medium text-zinc-700 mb-2 block">Service Address or ZIP Code</label>
-              <input id="field-address" type="text" placeholder="123 Main St, Ocean NJ" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+              <input id="field-address" type="text" placeholder="123 Main St, Ocean NJ" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all">
             </div>
 
             <div>
               <label class="text-sm font-medium text-zinc-700 mb-2 block">Home Size</label>
               <div class="relative">
-                <select id="field-homeSize" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all appearance-none cursor-pointer">
+                <select id="field-homeSize" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all appearance-none cursor-pointer">
                   <option value="" disabled selected>Select size</option>
                   <option>Studio / 1 Bedroom</option>
                   <option>2 Bedrooms</option>
@@ -227,7 +227,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
 
             <div>
               <label class="text-sm font-medium text-zinc-700 mb-2 block">Anything specific we should know? <span class="text-zinc-400 font-light text-xs ml-1">(Optional)</span></label>
-              <textarea id="field-notes" rows="3" placeholder="e.g. We have a dog, hardwood floors throughout, code for entry is 1234" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all resize-none"></textarea>
+              <textarea id="field-notes" rows="3" placeholder="e.g. We have a dog, hardwood floors throughout, code for entry is 1234" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all resize-none"></textarea>
             </div>
 
 
@@ -280,7 +280,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
           <div class="mt-8">
             <label class="text-sm font-medium text-zinc-700 mb-3 block">Preferred time of day</label>
             <div class="flex gap-2 flex-wrap">
-              <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4CC] bg-[#00C4CC]/5 text-[#00AAB0] text-sm font-light cursor-pointer transition-all" data-time-pill>
+              <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#04358D] bg-[#04358D]/5 text-[#2C57A7] text-sm font-light cursor-pointer transition-all" data-time-pill>
                 <iconify-icon icon="solar:sun-fog-linear"></iconify-icon> Morning (9am – 12pm)
               </div>
               <div class="time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-200 text-zinc-600 text-sm font-light cursor-pointer hover:border-zinc-300 transition-all" data-time-pill>
@@ -311,24 +311,24 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <input id="field-firstName" type="text" placeholder="First Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+                <input id="field-firstName" type="text" placeholder="First Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all">
               </div>
               <div>
-                <input id="field-lastName" type="text" placeholder="Last Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+                <input id="field-lastName" type="text" placeholder="Last Name" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all">
               </div>
             </div>
 
             <div>
-              <input id="field-phone" type="tel" placeholder="(732) 000-0000" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+              <input id="field-phone" type="tel" placeholder="(732) 000-0000" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all">
             </div>
 
             <div>
-              <input id="field-email" type="email" placeholder="Email Address" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all">
+              <input id="field-email" type="email" placeholder="Email Address" required class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all">
             </div>
 
             <div class="pt-2">
               <div class="relative">
-                <select id="field-hearAboutUs" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#00C4CC]/20 focus:border-[#00C4CC] transition-all appearance-none cursor-pointer">
+                <select id="field-hearAboutUs" class="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#04358D]/20 focus:border-[#04358D] transition-all appearance-none cursor-pointer">
                   <option value="" disabled selected>How did you hear about us? (Optional)</option>
                   <option>Google Search</option>
                   <option>Friend or Neighbor</option>
@@ -347,7 +347,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
             </div>
           </div>
 
-          <button id="btn-submit" data-webhook={webhookUrl} class="inline-flex items-center justify-center gap-2 w-full bg-[#00C4CC] text-[#FAFFFE] px-8 py-4 rounded-full text-base font-medium hover:bg-[#00AAB0] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] mt-8">
+          <button id="btn-submit" data-webhook={webhookUrl} class="inline-flex items-center justify-center gap-2 w-full bg-[#04358D] text-[#FAFFFE] px-8 py-4 rounded-full text-base font-medium hover:bg-[#2C57A7] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] mt-8">
             Send My Estimate Request <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
           </button>
 
@@ -373,7 +373,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
     <div class="w-full lg:w-80 xl:w-96">
       <div class="bg-[#FAFFFE] rounded-[2rem] ring-1 ring-zinc-200/60 p-8 sticky top-28">
 
-        <span class="bg-[#00C4CC]/10 border border-[#00C4CC]/20 text-[#00AAB0] text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6">
+        <span class="bg-[#04358D]/10 border border-[#04358D]/20 text-[#2C57A7] text-xs font-medium px-3 py-1 rounded-full inline-flex mb-6">
           Karen's Guarantee
         </span>
 
@@ -383,7 +383,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
           {benefits.map((benefit: any) => (
             <div class="flex items-start gap-3">
               <div class="w-6 h-6 rounded-full bg-zinc-50 border border-zinc-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <iconify-icon icon="solar:check-read-linear" class="text-[#00C4CC] text-sm"></iconify-icon>
+                <iconify-icon icon="solar:check-read-linear" class="text-[#04358D] text-sm"></iconify-icon>
               </div>
               <span class="text-sm text-zinc-600 font-light">{benefit.fields.title}</span>
             </div>
@@ -417,11 +417,11 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
         {/* Contact Info */}
         <div class="mt-8 space-y-3">
           <div class="flex items-center gap-2 text-sm font-light">
-            <iconify-icon icon="solar:phone-linear" class="text-[#00C4CC] text-base"></iconify-icon>
+            <iconify-icon icon="solar:phone-linear" class="text-[#04358D] text-base"></iconify-icon>
             <span class="text-zinc-500">(732) 693-2350</span>
           </div>
           <div class="flex items-center gap-2 text-sm font-light">
-            <iconify-icon icon="solar:clock-circle-linear" class="text-[#00C4CC] text-base"></iconify-icon>
+            <iconify-icon icon="solar:clock-circle-linear" class="text-[#04358D] text-base"></iconify-icon>
             <span class="text-zinc-500">Mon – Sat, 9am – 5pm</span>
           </div>
         </div>
@@ -479,10 +479,10 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
       if (!indicator || !label) continue;
 
       if (i < currentStep) {
-        indicator.className = "w-10 h-10 rounded-full bg-[#00C4CC] text-white text-sm font-medium flex items-center justify-center transition-colors duration-300";
+        indicator.className = "w-10 h-10 rounded-full bg-[#04358D] text-white text-sm font-medium flex items-center justify-center transition-colors duration-300";
         indicator.innerHTML = '<iconify-icon icon="solar:check-linear" class="text-lg"></iconify-icon>';
         label.className = "absolute top-12 text-xs text-zinc-400 font-light whitespace-nowrap";
-        if (line) line.className = "flex-1 h-px bg-[#00C4CC] mx-2 transition-colors duration-300";
+        if (line) line.className = "flex-1 h-px bg-[#04358D] mx-2 transition-colors duration-300";
       } else if (i === currentStep) {
         indicator.className = "w-10 h-10 rounded-full bg-[#0D2626] text-white text-sm font-medium flex items-center justify-center shadow-sm transition-colors duration-300";
         indicator.innerHTML = String(i);
@@ -501,18 +501,18 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
   document.querySelectorAll('[data-service-card]').forEach((card) => {
     card.addEventListener('click', () => {
       const el = card as HTMLElement;
-      const isSelected = el.classList.contains('border-[#00C4CC]');
+      const isSelected = el.classList.contains('border-[#04358D]');
       const checkIcon = el.querySelector('.check-icon') as HTMLElement;
       const iconSvg = el.querySelector('.icon-svg') as HTMLElement;
 
       if (isSelected) {
-        el.className = "service-card border border-zinc-200 hover:border-[#00C4CC]/50 hover:bg-[#00C4CC]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
+        el.className = "service-card border border-zinc-200 hover:border-[#04358D]/50 hover:bg-[#04358D]/3 hover:shadow-sm rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
         if (checkIcon) checkIcon.className = "absolute top-3 right-3 w-5 h-5 rounded-full border border-zinc-200 flex items-center justify-center check-icon hidden";
         if (iconSvg) iconSvg.className = "text-xl text-zinc-500 icon-svg";
       } else {
-        el.className = "service-card border border-[#00C4CC] bg-[#00C4CC]/5 ring-1 ring-[#00C4CC]/20 rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
-        if (checkIcon) checkIcon.className = "absolute top-3 right-3 w-5 h-5 rounded-full bg-[#00C4CC] flex items-center justify-center check-icon";
-        if (iconSvg) iconSvg.className = "text-xl text-[#00C4CC] icon-svg";
+        el.className = "service-card border border-[#04358D] bg-[#04358D]/5 ring-1 ring-[#04358D]/20 rounded-2xl p-5 cursor-pointer flex flex-col items-center text-center gap-3 transition-all relative";
+        if (checkIcon) checkIcon.className = "absolute top-3 right-3 w-5 h-5 rounded-full bg-[#04358D] flex items-center justify-center check-icon";
+        if (iconSvg) iconSvg.className = "text-xl text-[#04358D] icon-svg";
       }
     });
   });
@@ -523,7 +523,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
       document.querySelectorAll('[data-time-pill]').forEach((p) => {
         (p as HTMLElement).className = "time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-200 text-zinc-600 text-sm font-light cursor-pointer hover:border-zinc-300 transition-all";
       });
-      (pill as HTMLElement).className = "time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#00C4CC] bg-[#00C4CC]/5 text-[#00AAB0] text-sm font-light cursor-pointer transition-all";
+      (pill as HTMLElement).className = "time-pill flex items-center gap-2 px-4 py-2 rounded-full border border-[#04358D] bg-[#04358D]/5 text-[#2C57A7] text-sm font-light cursor-pointer transition-all";
     });
   });
 
@@ -571,7 +571,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
         cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto text-zinc-300 cursor-not-allowed';
       } else if (dateObj.getTime() === today.getTime()) {
         // Today
-        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto ring-1 ring-[#00C4CC] text-[#00C4CC] font-medium cursor-pointer';
+        cell.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm mx-auto ring-1 ring-[#04358D] text-[#04358D] font-medium cursor-pointer';
         cell.addEventListener('click', () => selectDate(cell, day));
       } else if (selectedDay === day && calMonth === new Date().getMonth() && calYear === new Date().getFullYear()) {
         // Selected
@@ -648,7 +648,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
 
   function validateStep1(): boolean {
     hideStepError(1);
-    const selected = document.querySelectorAll('[data-service-card].border-\\[\\#00C4CC\\]');
+    const selected = document.querySelectorAll('[data-service-card].border-\\[\\#04358D\\]');
     if (selected.length === 0) {
       showStepError(1, 'Please select at least one service.');
       return false;
@@ -729,7 +729,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
     const additionalNotes = (document.getElementById('field-notes') as HTMLTextAreaElement)?.value || '';
 
     // Selected services
-    const selectedCards = document.querySelectorAll('[data-service-card].border-\\[\\#00C4CC\\]');
+    const selectedCards = document.querySelectorAll('[data-service-card].border-\\[\\#04358D\\]');
     const serviceType = Array.from(selectedCards)
       .map(card => {
         const titleEl = card.querySelector('.text-sm.font-medium.text-zinc-900');
@@ -747,7 +747,7 @@ const badges = (trustBadges?.fields.badges || []).filter((b: any) => b?.fields);
     }
 
     // Selected time pill
-    const selectedTimePill = document.querySelector('[data-time-pill].border-\\[\\#00C4CC\\]');
+    const selectedTimePill = document.querySelector('[data-time-pill].border-\\[\\#04358D\\]');
     const preferredTime = selectedTimePill?.textContent?.trim() || '';
 
     // Disable button + show sending state
