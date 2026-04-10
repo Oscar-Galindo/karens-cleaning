@@ -5,12 +5,17 @@
  */
 
 import type { HeroComponentFields } from '@/lib/contentful';
+import { getAssetUrl } from '@/lib/contentful';
 
 export interface Props {
   fields: HeroComponentFields;
 }
 
 const { fields } = Astro.props;
+
+const heroImageUrl = fields.backgroundImage
+  ? getAssetUrl(fields.backgroundImage)
+  : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop';
 
 const rawTitle = fields.title || '';
 const dotIdx = rawTitle.indexOf('.');
@@ -74,8 +79,8 @@ if (dotIdx > 0 && dotIdx < rawTitle.length - 1) {
     <div class="absolute -inset-6 bg-gradient-to-b from-[#04358D]/20 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700 rounded-[3rem] -z-10"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-[#FAFFFE] via-transparent to-transparent z-20 h-full w-full bottom-0 rounded-3xl md:rounded-[2.5rem] pointer-events-none"></div>
     <img
-      src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop"
-      alt="Spotless modern living room"
+      src={heroImageUrl}
+      alt={fields.title || 'Spotless modern living room'}
       class="w-full h-[500px] md:h-[700px] lg:h-[800px] object-cover rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-[#1A1A1A]/10 relative z-10"
       loading="eager"
     />

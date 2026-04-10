@@ -439,6 +439,7 @@ export interface HeroComponentFields {
   primaryCtaLink?: string;
   secondaryCtaText?: string;
   secondaryCtaLink?: string;
+  backgroundImage?: Asset;
 }
 
 export interface BenefitItemFields {
