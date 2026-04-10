@@ -6,6 +6,7 @@
 
 import type { HeroComponentFields } from '@/lib/contentful';
 import { getAssetUrl } from '@/lib/contentful';
+import { CloudinaryPresets } from '@/lib/cloudinary';
 
 export interface Props {
   fields: HeroComponentFields;
@@ -13,9 +14,9 @@ export interface Props {
 
 const { fields } = Astro.props;
 
-const heroImageUrl = fields.backgroundImage
-  ? getAssetUrl(fields.backgroundImage)
-  : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop';
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop';
+const rawImageUrl = fields.backgroundImage ? getAssetUrl(fields.backgroundImage) : FALLBACK_IMAGE;
+const heroImageUrl = CloudinaryPresets.hero(rawImageUrl);
 
 const rawTitle = fields.title || '';
 const dotIdx = rawTitle.indexOf('.');
