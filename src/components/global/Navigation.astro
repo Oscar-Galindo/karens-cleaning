@@ -40,7 +40,7 @@ function isActive(url: string): boolean {
   <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
 
     <!-- Logo -->
-    <a href="/" class="flex items-center text-[#04358D]">
+    <a href="/" class="flex items-center text-[#102A52]">
       {logoUrl ? (
         <img src={logoUrl} alt={companyName} class="h-10 w-auto" />
       ) : (
@@ -57,7 +57,7 @@ function isActive(url: string): boolean {
           rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
           class:list={[
             'text-lg font-normal transition-colors',
-            isActive(item.link) ? 'text-[#04358D]' : 'text-[#1A1A1A] hover:text-[#04358D]'
+            isActive(item.link) ? 'text-[#102A52]' : 'text-[#1A1A1A] hover:text-[#102A52]'
           ]}
         >
           {item.label}
@@ -99,7 +99,7 @@ function isActive(url: string): boolean {
           href={item.link}
           class:list={[
             'text-xl font-normal transition-colors',
-            isActive(item.link) ? 'text-[#04358D]' : 'text-[#1A1A1A] hover:text-[#04358D]'
+            isActive(item.link) ? 'text-[#102A52]' : 'text-[#1A1A1A] hover:text-[#102A52]'
           ]}
         >
           {item.label}

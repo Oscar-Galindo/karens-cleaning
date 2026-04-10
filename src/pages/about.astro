@@ -89,7 +89,7 @@ const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-158462265
   {/* Page Hero */}
   <section class="relative pt-32 pb-24 px-6 text-center overflow-hidden flex flex-col items-center">
     <div class="absolute inset-0 -z-10 bg-mesh [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] opacity-50"></div>
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#04358D]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#102A52]/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
     <div class="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
 
     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm text-xs font-medium mb-8">
@@ -145,8 +145,8 @@ const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-158462265
           const icon = valueIcons[benefit.fields.title?.toLowerCase()] || defaultValueIcons[i % defaultValueIcons.length];
           return (
             <div class="bg-white rounded-3xl p-10 ring-1 ring-zinc-200/60 shadow-sm relative overflow-hidden group">
-              <div class="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#04358D]/5 transition-all duration-500">
-                <iconify-icon icon={icon} class="text-2xl text-[#04358D]"></iconify-icon>
+              <div class="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#102A52]/5 transition-all duration-500">
+                <iconify-icon icon={icon} class="text-2xl text-[#102A52]"></iconify-icon>
               </div>
               <h3 class="text-xl font-medium text-zinc-900 mb-3 tracking-tighter">{benefit.fields.title}</h3>
               <p class="text-sm font-light text-zinc-500 leading-relaxed">{benefit.fields.description}</p>
@@ -171,8 +171,8 @@ const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-158462265
             const icon = credentialIcons[benefit.fields.title?.toLowerCase()] || defaultCredentialIcons[i % defaultCredentialIcons.length];
             return (
               <div class="bg-white rounded-2xl p-6 ring-1 ring-zinc-200/60 shadow-sm flex gap-4 items-start hover:ring-zinc-300 transition-shadow cursor-default">
-                <div class="w-10 h-10 rounded-full bg-[#04358D]/10 border border-[#04358D]/20 flex items-center justify-center flex-shrink-0">
-                  <iconify-icon icon={icon} class="text-[#04358D] text-lg"></iconify-icon>
+                <div class="w-10 h-10 rounded-full bg-[#102A52]/10 border border-[#102A52]/20 flex items-center justify-center flex-shrink-0">
+                  <iconify-icon icon={icon} class="text-[#102A52] text-lg"></iconify-icon>
                 </div>
                 <div>
                   <h3 class="text-sm font-medium text-zinc-900 mb-1">{benefit.fields.title}</h3>
@@ -195,8 +195,8 @@ const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-158462265
   {/* Bottom CTA — outside container, two buttons */}
   {ctaBanner && (
     <section class="pb-24 px-6 relative">
-      <div class="max-w-5xl mx-auto bg-[#0D2626] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
-        <div class="absolute inset-0 bg-[#04358D]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
+      <div class="max-w-5xl mx-auto bg-[#102A52] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+        <div class="absolute inset-0 bg-[#102A52]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
         <div class="absolute top-0 right-0 bg-[#D4AF37]/5 blur-[80px] w-[300px] h-[300px] rounded-full mix-blend-screen pointer-events-none"></div>
 
         <h2 class="text-4xl font-medium tracking-tighter text-white mb-4 relative z-10">
@@ -212,7 +212,7 @@ const storyImageSrc = storyImage || 'https://images.unsplash.com/photo-158462265
           {ctaBanner.fields.ctaText && (
             <a
               href={ctaBanner.fields.ctaLink || '#contact'}
-              class="inline-flex items-center justify-center gap-2 bg-[#04358D] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#2C57A7] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] w-full sm:w-auto"
+              class="inline-flex items-center justify-center gap-2 bg-[#102A52] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#1E3F6E] transition-all shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)] w-full sm:w-auto"
             >
               {ctaBanner.fields.ctaText}
             </a>

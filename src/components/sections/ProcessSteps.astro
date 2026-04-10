@@ -37,14 +37,14 @@ const stepIcons = [
   {steps.length > 0 && (
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative max-w-5xl mx-auto mb-20">
       {/* Connecting line */}
-      <div class="hidden md:block absolute top-16 left-[15%] right-[15%] h-0.5 bg-[#04358D]/10 -z-10"></div>
+      <div class="hidden md:block absolute top-16 left-[15%] right-[15%] h-0.5 bg-[#102A52]/10 -z-10"></div>
 
       {steps.map((step: any, i: number) => {
         const num = step.fields.stepNumber || i + 1;
         return (
           <div class="text-center bg-[#FAFFFE]/50 backdrop-blur-sm p-4 rounded-3xl">
             {/* Circle with icon */}
-            <div class="w-32 h-32 mx-auto bg-[#EDF1FA] rounded-full flex items-center justify-center text-[#04358D] mb-8 shadow-sm border border-[#04358D]/20 relative z-10">
+            <div class="w-32 h-32 mx-auto bg-[#EDF1FA] rounded-full flex items-center justify-center text-[#102A52] mb-8 shadow-sm border border-[#102A52]/20 relative z-10">
               <Fragment set:html={stepIcons[i % stepIcons.length]} />
             </div>
 

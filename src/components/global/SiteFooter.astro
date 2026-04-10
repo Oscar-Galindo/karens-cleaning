@@ -1,7 +1,7 @@
 ---
 /**
  * Site Footer — Karen's Cleaning
- * Dark green (#0D2626) footer with logo, social icons, link columns, legal
+ * Dark green (#102A52) footer with logo, social icons, link columns, legal
  * All data from Site Settings → Footer reference (single source of truth)
  */
 
@@ -52,13 +52,13 @@ const legalCol = footer?.legalLinks.length
 const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} Karen's Cleaning Services. All rights reserved.`;
 ---
 
-<footer id="contact" class="bg-[#0D2626] pt-24 pb-12 px-6">
+<footer id="contact" class="bg-[#102A52] pt-24 pb-12 px-6">
   <div class="max-w-7xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
 
       {/* Logo & Socials */}
       <div class="md:col-span-1">
-        <a href="/" class="flex items-center text-[#04358D] mb-8">
+        <a href="/" class="flex items-center text-[#102A52] mb-8">
           {logoUrl ? (
             <img src={logoUrl} alt={companyName} class="h-12 w-auto brightness-0 invert" />
           ) : (
@@ -72,7 +72,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#F8F8F8] hover:text-[#2C57A7] hover:bg-[#F8F8F8]/10 transition-colors"
+                class="w-12 h-12 rounded-full border border-[#F8F8F8]/20 flex items-center justify-center text-[#F8F8F8] hover:text-[#1E3F6E] hover:bg-[#F8F8F8]/10 transition-colors"
                 aria-label={social.platform}
               >
                 <iconify-icon icon={social.icon} class="text-lg"></iconify-icon>
@@ -92,7 +92,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={item.link}
                 target={item.openInNewTab ? '_blank' : undefined}
                 rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                class="text-[#F8F8F8]/70 hover:text-[#2C57A7] transition-colors"
+                class="text-[#F8F8F8]/70 hover:text-[#1E3F6E] transition-colors"
               >
                 {item.label}
               </a>
@@ -111,7 +111,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
                 href={item.link}
                 target={item.openInNewTab ? '_blank' : undefined}
                 rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
-                class="text-[#F8F8F8] font-normal hover:text-[#2C57A7] transition-colors"
+                class="text-[#F8F8F8] font-normal hover:text-[#1E3F6E] transition-colors"
               >
                 {item.label}
               </a>
@@ -134,7 +134,7 @@ const copyrightText = footer?.copyrightText || `© ${new Date().getFullYear()} K
       {legalCol.length > 0 && (
         <div class="flex gap-8">
           {legalCol.map((item) => (
-            <a href={item.link} class="text-[#F8F8F8]/50 hover:text-[#2C57A7] transition-colors">{item.label}</a>
+            <a href={item.link} class="text-[#F8F8F8]/50 hover:text-[#1E3F6E] transition-colors">{item.label}</a>
           ))}
         </div>
       )}

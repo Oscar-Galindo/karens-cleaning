@@ -19,20 +19,20 @@ export default defineConfig({
   
   theme: {
     colors: {
-      // Primary Colors (Brand Teal — #04358D)
+      // Primary Colors (Dark Royal Blue — #102A52)
       primary: {
         50: '#F0FDFD',
         100: '#CCFBFC',
         200: '#99F5F7',
         300: '#5EEDF0',
         400: '#2DD9DE',
-        500: '#04358D', // Main brand color
+        500: '#102A52', // Main brand color
         600: '#00A3AA',
-        700: '#2C57A7',
+        700: '#1E3F6E',
         800: '#006E73',
         900: '#005A5E',
         950: '#003A3D',
-        DEFAULT: '#04358D',
+        DEFAULT: '#102A52',
       },
       
       // Secondary Colors (Brand Orange)
@@ -232,10 +232,10 @@ export default defineConfig({
   rules: [
     // Gradient backgrounds
     ['bg-gradient-brand', {
-      background: 'linear-gradient(135deg, #04358D 0%, #2C57A7 100%)'
+      background: 'linear-gradient(135deg, #102A52 0%, #1E3F6E 100%)'
     }],
     ['bg-gradient-brand-reverse', {
-      background: 'linear-gradient(135deg, #2C57A7 0%, #04358D 100%)'
+      background: 'linear-gradient(135deg, #1E3F6E 0%, #102A52 100%)'
     }],
     ['bg-gradient-accent', { 
       background: 'linear-gradient(135deg, #FF7A0F 0%, #F05E05 100%)' 
@@ -243,7 +243,7 @@ export default defineConfig({
     
     // Text gradients
     ['text-gradient-brand', {
-      background: 'linear-gradient(135deg, #04358D 0%, #2C57A7 100%)',
+      background: 'linear-gradient(135deg, #102A52 0%, #1E3F6E 100%)',
       '-webkit-background-clip': 'text',
       '-webkit-text-fill-color': 'transparent',
       'background-clip': 'text',

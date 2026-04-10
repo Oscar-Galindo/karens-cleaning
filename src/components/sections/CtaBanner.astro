@@ -17,9 +17,9 @@ const isDark = fields.backgroundColor === 'dark';
 
 {isDark ? (
   <section class="py-24 px-6 relative">
-    <div class="max-w-5xl mx-auto bg-[#0D2626] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+    <div class="max-w-5xl mx-auto bg-[#102A52] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
       {/* Glow inside card */}
-      <div class="absolute inset-0 bg-[#04358D]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
+      <div class="absolute inset-0 bg-[#102A52]/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none"></div>
 
       <h2 class="text-4xl font-medium tracking-tighter text-white mb-4 relative z-10">
         {fields.title}
@@ -34,7 +34,7 @@ const isDark = fields.backgroundColor === 'dark';
       {fields.ctaText && (
         <a
           href={fields.ctaLink || '#contact'}
-          class="inline-flex items-center justify-center gap-2 bg-[#04358D] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#2C57A7] transition-all relative z-10 shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)]"
+          class="inline-flex items-center justify-center gap-2 bg-[#102A52] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#1E3F6E] transition-all relative z-10 shadow-[0_0_40px_-10px_rgba(0,196,204,0.3)]"
         >
           {fields.ctaText}
         </a>
@@ -43,7 +43,7 @@ const isDark = fields.backgroundColor === 'dark';
   </section>
 ) : (
   <section class="py-24 px-6 relative">
-    <div class="max-w-5xl mx-auto rounded-[3rem] p-12 md:p-20 text-center bg-[#EDF1FA] ring-1 ring-[#04358D]/10">
+    <div class="max-w-5xl mx-auto rounded-[3rem] p-12 md:p-20 text-center bg-[#EDF1FA] ring-1 ring-[#102A52]/10">
       <h2 class="text-4xl font-medium tracking-tighter text-zinc-900 mb-4">
         {fields.title}
       </h2>
@@ -57,7 +57,7 @@ const isDark = fields.backgroundColor === 'dark';
       {fields.ctaText && (
         <a
           href={fields.ctaLink || '#contact'}
-          class="inline-flex items-center justify-center gap-2 bg-[#04358D] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#2C57A7] transition-all shadow-sm"
+          class="inline-flex items-center justify-center gap-2 bg-[#102A52] text-[#FAFFFE] px-8 py-3.5 rounded-full text-base font-medium hover:bg-[#1E3F6E] transition-all shadow-sm"
         >
           {fields.ctaText}
         </a>
