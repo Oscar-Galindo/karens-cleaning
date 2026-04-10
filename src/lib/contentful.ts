@@ -368,15 +368,27 @@ export async function getHeroSection(id: string): Promise<HeroSection | null> {
 /**
  * Get Contentful asset URL
  */
-export function getAssetUrl(asset?: Asset): string | null {
+export function getAssetUrl(
+  asset?: Asset,
+  opts?: { width?: number; height?: number; quality?: number; format?: 'webp' | 'jpg' | 'png'; fit?: 'pad' | 'fill' | 'scale' | 'crop' | 'thumb'; raw?: boolean }
+): string | null {
   if (!asset?.fields?.file?.url) return null;
 
-  const url = asset.fields.file.url;
-  // Ensure URL is absolute (url is always a string from Contentful's AssetFile)
-  if (typeof url === 'string') {
-    return url.startsWith('//') ? `https:${url}` : url;
-  }
-  return null;
+  const rawUrl = asset.fields.file.url;
+  if (typeof rawUrl !== 'string') return null;
+
+  const baseUrl = rawUrl.startsWith('//') ? `https:${rawUrl}` : rawUrl;
+
+  const isImage = asset.fields.file.contentType?.toString().startsWith('image/');
+  if (!isImage || opts?.raw) return baseUrl;
+
+  const params = new URLSearchParams();
+  params.append('fm', opts?.format || 'webp');
+  params.append('q', String(opts?.quality || 80));
+  if (opts?.width) params.append('w', String(opts.width));
+  if (opts?.height) params.append('h', String(opts.height));
+  if (opts?.fit) params.append('fit', opts.fit);
+  return `${baseUrl}?${params.toString()}`;
 }
 
 /**
