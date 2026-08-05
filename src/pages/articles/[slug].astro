@@ -8,8 +8,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navigation from '@/components/global/Navigation.astro';
 import SiteFooter from '@/components/global/SiteFooter.astro';
 import { getArticle, getArticles } from '@/lib/contentful';
-import richTextHtmlRenderer from '@contentful/rich-text-html-renderer';
-const { documentToHtmlString } = richTextHtmlRenderer;
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { documentToHtmlString } = require('@contentful/rich-text-html-renderer');
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { CloudinaryPresets, getCloudinaryUrl } from '@/lib/cloudinary';
 
