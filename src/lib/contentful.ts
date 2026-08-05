@@ -26,6 +26,12 @@ export const client = (spaceId && accessToken) ? createClient({
   environment: environment,
 }) : null;
 
+// Temporary diagnostic: captures the last fetch error so a page can surface
+// it via a response header, since Vercel runtime logs aren't reachable.
+export let lastContentfulError: string = client
+  ? ''
+  : `client not created at module init (space=${spaceId ? 'SET' : 'MISSING'}, token=${accessToken ? 'SET' : 'MISSING'})`;
+
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
@@ -680,9 +686,11 @@ export async function getHomePageData(): Promise<HomePageData | null> {
     });
 
     if (entries.items.length === 0) {
-      console.error('No page found with slug "home"');
+      lastContentfulError = 'No page found with slug "home"';
+      console.error(lastContentfulError);
       return null;
     }
+    lastContentfulError = '';
 
     const entry = entries.items[0];
     const fields = entry.fields as any;
@@ -716,7 +724,8 @@ export async function getHomePageData(): Promise<HomePageData | null> {
       components,
     };
   } catch (error: any) {
-    console.error('Error fetching home page:', error.message);
+    lastContentfulError = `Error fetching home page: ${error.message}`;
+    console.error(lastContentfulError);
     return null;
   }
 }

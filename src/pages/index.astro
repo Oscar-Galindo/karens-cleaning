@@ -8,9 +8,16 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navigation from '@/components/global/Navigation.astro';
 import SiteFooter from '@/components/global/SiteFooter.astro';
 import SectionRendererV2 from '@/components/SectionRendererV2.astro';
-import { getHomePageData, getAssetUrl } from '@/lib/contentful';
+import { getHomePageData, getAssetUrl, lastContentfulError } from '@/lib/contentful';
 
 const page = await getHomePageData();
+
+// Temporary diagnostic: surface the real fetch failure reason via a response
+// header, since Vercel runtime logs aren't reachable right now. Remove once
+// the production 500 is confirmed fixed.
+if (!page) {
+  Astro.response.headers.set('x-debug-contentful-error', lastContentfulError || 'unknown');
+}
 
 const seoTitle = page?.seo?.metaTitle || "Karen's Cleaning — Trusted Home Cleaning Services";
 const seoDescription = page?.seo?.metaDescription || "Professional, reliable house cleaning services. Book your free estimate today.";
