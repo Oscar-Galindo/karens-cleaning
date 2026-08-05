@@ -6,9 +6,11 @@
 
 import type { ContentWithImageComponentFields } from '@/lib/contentful';
 import { getAssetUrl } from '@/lib/contentful';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const { documentToHtmlString } = require('@contentful/rich-text-html-renderer');
+import * as RichTextHtmlRendererNS from '@contentful/rich-text-html-renderer';
+const documentToHtmlString =
+  RichTextHtmlRendererNS.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default?.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default;
 
 export interface Props {
   fields: ContentWithImageComponentFields;

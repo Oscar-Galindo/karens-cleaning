@@ -16,10 +16,12 @@ import SiteFooter from '@/components/global/SiteFooter.astro';
 import ContactInfo from '@/components/sections/ContactInfo.astro';
 import { getPageData, getAssetUrl } from '@/lib/contentful';
 import type { ContentWithImageComponentFields, BenefitsGridComponentFields, CtaBannerComponentFields, ContactInfoComponentFields } from '@/lib/contentful';
-import { createRequire } from 'node:module';
+import * as RichTextHtmlRendererNS from '@contentful/rich-text-html-renderer';
 
-const require = createRequire(import.meta.url);
-const { documentToHtmlString } = require('@contentful/rich-text-html-renderer');
+const documentToHtmlString =
+  RichTextHtmlRendererNS.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default?.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default;
 
 const page = await getPageData('about');
 

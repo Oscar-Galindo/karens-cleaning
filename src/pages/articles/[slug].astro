@@ -10,10 +10,12 @@ import SiteFooter from '@/components/global/SiteFooter.astro';
 import { getArticle, getArticles } from '@/lib/contentful';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { CloudinaryPresets, getCloudinaryUrl } from '@/lib/cloudinary';
-import { createRequire } from 'node:module';
+import * as RichTextHtmlRendererNS from '@contentful/rich-text-html-renderer';
 
-const require = createRequire(import.meta.url);
-const { documentToHtmlString } = require('@contentful/rich-text-html-renderer');
+const documentToHtmlString =
+  RichTextHtmlRendererNS.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default?.documentToHtmlString ||
+  (RichTextHtmlRendererNS as any).default;
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/articles');
