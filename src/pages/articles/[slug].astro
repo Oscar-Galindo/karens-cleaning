@@ -8,7 +8,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Navigation from '@/components/global/Navigation.astro';
 import SiteFooter from '@/components/global/SiteFooter.astro';
 import { getArticle, getArticles } from '@/lib/contentful';
-import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import richTextHtmlRenderer from '@contentful/rich-text-html-renderer';
+const { documentToHtmlString } = richTextHtmlRenderer;
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 import { CloudinaryPresets, getCloudinaryUrl } from '@/lib/cloudinary';
 

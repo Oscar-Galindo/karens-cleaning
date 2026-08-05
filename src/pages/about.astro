@@ -15,7 +15,8 @@ import Navigation from '@/components/global/Navigation.astro';
 import SiteFooter from '@/components/global/SiteFooter.astro';
 import ContactInfo from '@/components/sections/ContactInfo.astro';
 import { getPageData, getAssetUrl } from '@/lib/contentful';
-import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import richTextHtmlRenderer from '@contentful/rich-text-html-renderer';
+const { documentToHtmlString } = richTextHtmlRenderer;
 import type { ContentWithImageComponentFields, BenefitsGridComponentFields, CtaBannerComponentFields, ContactInfoComponentFields } from '@/lib/contentful';
 
 const page = await getPageData('about');

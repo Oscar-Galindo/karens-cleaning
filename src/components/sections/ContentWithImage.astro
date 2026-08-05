@@ -6,7 +6,8 @@
 
 import type { ContentWithImageComponentFields } from '@/lib/contentful';
 import { getAssetUrl } from '@/lib/contentful';
-import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
+import richTextHtmlRenderer from '@contentful/rich-text-html-renderer';
+const { documentToHtmlString } = richTextHtmlRenderer;
 
 export interface Props {
   fields: ContentWithImageComponentFields;
